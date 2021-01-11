@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import requests
 import csv
+import pandas as pd
+import numpy as np
 
 source = requests.get('https://en.wikipedia.org/wiki/Opinion_polling_for_the_next_United_Kingdom_general_election#2021').text
 soup = BeautifulSoup(source,'lxml')
@@ -9,14 +11,16 @@ table = soup.find('table', class_='wikitable sortable').tbody
 
 rows = table.find_all('tr')
 
-csvfile = open('pollresults.csv','w',newline='')
-csvwriter = csv.writer(csvfile)
+#csvfile = open('pollresults.csv','w',newline='')
+#csvwriter = csv.writer(csvfile)
+
+array = []
 
 headers = rows[0].find_all('th')
 for header in range(len(headers)):
     headers[header] = headers[header].text.replace('\n', '')
 rows.pop(0)
-csvwriter.writerow(headers)
+#csvwriter.writerow(headers)
 
 for row in rows:
     data = row.find_all('td')
@@ -24,6 +28,9 @@ for row in rows:
     if len(data) == len(headers):
         for datum in range(len(data)):
             data[datum] = data[datum].text.replace('\n', '')
-        csvwriter.writerow(data)
+        #csvwriter.writerow(data)
+        array.append(data)
 
-csvfile.close()
+df = pd.DataFrame(array,columns=headers)
+df.to_csv("pollresults.csv")
+#csvfile.close()
