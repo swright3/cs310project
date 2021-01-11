@@ -4,10 +4,18 @@ import csv
 import pandas as pd
 import numpy as np
 
-source = requests.get('https://en.wikipedia.org/wiki/Opinion_polling_for_the_next_United_Kingdom_general_election#2021').text
-soup = BeautifulSoup(source,'lxml')
+def getHTML(link):
+    source = requests.get(link).text
+    soup = BeautifulSoup(source,'lxml')
+    return soup
 
-table = soup.find('table', class_='wikitable sortable').tbody
+def getTables(soup,number)
+    tables = soup.find_all('table', class_='wikitable sortable')
+    tables = tables[:number]
+    for table in len(tables):
+        tables[table] = tables[table].tbody
+    return tables
+
 
 rows = table.find_all('tr')
 
