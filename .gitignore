@@ -139,3 +139,9 @@ cython_debug/
 
 # Project files
 pollresults.csv
+pastresults.csv
+2015results.csv
+2016results.csv
+2017results.csv
+2020results.csv
+2021results.csv
