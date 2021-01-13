@@ -32,13 +32,12 @@ def tableToArray(table):
             array.append(data)
     return headers, array
 
-def pollsToCSV(source,tableNo):
+def pollsToCSV(source,years):
     soup = getHTML(source)
-    tables = getTables(soup,tableNo)
+    tables = getTables(soup,len(years))
     first = True
     tableArray = []
-    for table in tables:
-        headers, data = tableToArray(table)
-        tableArray = tableArray + data
-    df = pd.DataFrame(tableArray,columns=headers)
-    df.to_csv("pollresults.csv")
+    for table in range(len(tables)):
+        headers, data = tableToArray(tables[table])
+        df = pd.DataFrame(data,columns=headers)
+        df.to_csv(str(years[table])+"results.csv")
