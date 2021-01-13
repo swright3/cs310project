@@ -32,13 +32,13 @@ def tableToArray(table):
             array.append(data)
     return headers, array
 
-source = "https://en.wikipedia.org/wiki/Opinion_polling_for_the_next_United_Kingdom_general_election#2021"
-soup = getHTML(source)
-tables = getTables(soup,2)
-first = True
-tableArray = []
-for table in tables:
-    headers, data = tableToArray(table)
-    tableArray = tableArray + data
-df = pd.DataFrame(tableArray,columns=headers)
-df.to_csv("pollresults.csv")
+def pollsToCSV(source,tableNo):
+    soup = getHTML(source)
+    tables = getTables(soup,tableNo)
+    first = True
+    tableArray = []
+    for table in tables:
+        headers, data = tableToArray(table)
+        tableArray = tableArray + data
+    df = pd.DataFrame(tableArray,columns=headers)
+    df.to_csv("pollresults.csv")
