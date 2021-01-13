@@ -15,10 +15,10 @@ def getTables(soup,limit):
         tables[table] = tables[table].tbody
     return tables
 
-def tableToDf(table,df,first):
+def tableToArray(table):
     rows = table.find_all('tr')
-    array = []
     headers = rows[0].find_all('th')
+    array = []
 
     for header in range(len(headers)):
         headers[header] = headers[header].text.replace('\n', '')
@@ -30,21 +30,15 @@ def tableToDf(table,df,first):
             for datum in range(len(data)):
                 data[datum] = data[datum].text.replace('\n', '')
             array.append(data)
-
-    if first == True:
-        df = pd.DataFrame(array,columns=headers)
-        first = False
-    else:
-        df.append(array)
-    return df
+    return headers, array
 
 source = "https://en.wikipedia.org/wiki/Opinion_polling_for_the_next_United_Kingdom_general_election#2021"
 soup = getHTML(source)
 tables = getTables(soup,2)
-df = pd.DataFrame()
 first = True
+tableArray = []
 for table in tables:
-    df = tableToDf(table,df,first)
-    first = False
-print(df)
-#df.to_csv("pollresults.csv")
+    headers, data = tableToArray(table)
+    tableArray = tableArray + data
+df = pd.DataFrame(tableArray,columns=headers)
+df.to_csv("pollresults.csv")
