@@ -145,3 +145,6 @@ pastresults.csv
 2017results.csv
 2020results.csv
 2021results.csv
+
+# database files
+.db
