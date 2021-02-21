@@ -4,21 +4,21 @@ conn = sqlite3.connect('ukpoliticstweets.db')
 
 c = conn.cursor()
 
+c.execute("DROP TABLE IF EXISTS tweets")
 
-# c.execute('''CREATE TABLE tweets (
-#     id INTEGER PRIMARY KEY,
-#     user TEXT,
-#     text TEXT,
-#     hashtags TEXT,
-#     location TEXT,
-#     date TEXT,
-#     followers INTEGER,
-#     retweets INTEGER,
-#     favourites INTEGER,
-#     replyToId INTEGER
-# )'''
-# )
-
+c.execute('''CREATE TABLE tweets (
+    id INTEGER PRIMARY KEY,
+    user TEXT,
+    text TEXT,
+    hashtags TEXT,
+    location TEXT,
+    date TEXT,
+    followers INTEGER,
+    retweets INTEGER,
+    favourites INTEGER,
+    replyToId INTEGER
+)'''
+)
 
 def insertTweet(values):
     c.execute("INSERT INTO tweets (id,user,text,hashtags,location,date,followers,retweets,favourites,replyToId) VALUES (?,?,?,?,?,?,?,?,?,?);",values)

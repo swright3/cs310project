@@ -26,7 +26,11 @@ api = connect_to_twitter_OAuth()
 class StreamListener(tweepy.StreamListener):
     #Inherit from tweepy streamlistener and override methods because they are stubs
     def on_status(self, status):
-        print(status.text)
+        hashtags = ""
+        for tag in status.entities["hashtags"]:
+            hashtags = hashtags + tag["text"] + ","
+        print(hashtags)
+        #print(status.entities["text"])
         
     def on_error(self, status_code):
         if status_code == 420:
@@ -34,4 +38,5 @@ class StreamListener(tweepy.StreamListener):
 
 sl = StreamListener()
 stream = tweepy.Stream(auth=api.auth, listener=sl)
-stream.filter(track=["tory"],languages=["en"])
+stream.filter(track=["libdem,libdemfightback,tory,toryparty,labour,labourparty"],languages=["en"])
+
