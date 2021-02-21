@@ -14,13 +14,14 @@ c = conn.cursor()
 #     date TEXT,
 #     followers INTEGER,
 #     retweets INTEGER,
-#     favourites INTEGER
+#     favourites INTEGER,
+#     replyToId INTEGER
 # )'''
 # )
 
 
 def insertTweet(values):
-    c.execute("INSERT INTO tweets (id,user,text,hashtags,location,date,followers,retweets,favourites) VALUES (?,?,?,?,?,?,?,?,?);",values)
+    c.execute("INSERT INTO tweets (id,user,text,hashtags,location,date,followers,retweets,favourites,replyToId) VALUES (?,?,?,?,?,?,?,?,?,?);",values)
     conn.commit()
 
 """ def select(columns,criteria):
@@ -41,7 +42,7 @@ def insertTweet(values):
 def delete(table,criteria):
     c.execute('DELETE FROM ? WHERE ?;',(table,criteria))
 
-tweet = (101,"sam","despite all the negative press covfefe","#gymladboris","right here","right now",2000,1999,1998)
+tweet = (101,"sam","despite all the negative press covfefe","#gymladboris","right here","right now",2000,1999,1998,0)
 
 ##insertTweet(tweet)
 #print(select(("id","text"),("followers = 2000","retweets = 1999"))

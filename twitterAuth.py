@@ -19,6 +19,19 @@ def connect_to_twitter_OAuth():
 # Create API object
 api = connect_to_twitter_OAuth()
 
-trump_tweets = api.user_timeline('LinusTechTip_')
-for tweet in trump_tweets:
-    print(tweet.text)
+# meme_tweets = api.user_timeline('LinusTechTip_')
+# for tweet in meme_tweets:
+#     print(tweet.text)
+
+class StreamListener(tweepy.StreamListener):
+    #Inherit from tweepy streamlistener and override methods because they are stubs
+    def on_status(self, status):
+        print(status.text)
+        
+    def on_error(self, status_code):
+        if status_code == 420:
+            return False
+
+sl = StreamListener()
+stream = tweepy.Stream(auth=api.auth, listener=sl)
+stream.filter(track=["tory"],languages=["en"])
