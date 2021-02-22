@@ -147,5 +147,5 @@ pastresults.csv
 2021results.csv
 
 # database files
-.db
+*.db
 *.csv

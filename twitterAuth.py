@@ -1,4 +1,5 @@
 import tweepy
+from dbcontrol import insertTweet
 
 # Variables that contains the credentials to access Twitter API
 ACCESS_TOKEN = '3099117383-ybROCSwGlrqSNgNWYAGU1PlZ5FNFkzdyYDruplo'
@@ -26,15 +27,31 @@ api = connect_to_twitter_OAuth()
 class StreamListener(tweepy.StreamListener):
     #Inherit from tweepy streamlistener and override methods because they are stubs
     def on_status(self, status):
-        hashtags = ""
-        for tag in status.entities["hashtags"]:
-            hashtags = hashtags + tag["text"] + ","
-        print(hashtags)
         #print(status.entities["text"])
+        tweet = self.extractData(status)
+        insertTweet(tweet)
         
     def on_error(self, status_code):
         if status_code == 420:
             return False
+
+    def extractData(self, status):
+        data = []
+        data.append(status.id)
+        data.append(status.user.id)
+        data.append(status.text)
+        hashtags = ""
+        for tag in status.entities["hashtags"]:
+            hashtags = hashtags + tag["text"] + ","
+        data.append(hashtags)
+        data.append(str(status.user.location))
+        data.append(str(status.coordinates))
+        data.append(str(status.created_at))
+        data.append(status.user.followers_count)
+        data.append(status.retweet_count)
+        data.append(status.favorite_count)
+        data.append(status.in_reply_to_user_id)
+        return data
 
 sl = StreamListener()
 stream = tweepy.Stream(auth=api.auth, listener=sl)

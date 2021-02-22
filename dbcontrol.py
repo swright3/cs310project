@@ -1,28 +1,31 @@
 import sqlite3
 
-conn = sqlite3.connect('ukpoliticstweets.db')
 
-c = conn.cursor()
 
-c.execute("DROP TABLE IF EXISTS tweets")
 
-c.execute('''CREATE TABLE tweets (
-    id INTEGER PRIMARY KEY,
-    user TEXT,
-    text TEXT,
-    hashtags TEXT,
-    location TEXT,
-    date TEXT,
-    followers INTEGER,
-    retweets INTEGER,
-    favourites INTEGER,
-    replyToId INTEGER
-)'''
-)
+# c.execute("DROP TABLE IF EXISTS tweets")
+
+# c.execute('''CREATE TABLE tweets (
+#     id INTEGER PRIMARY KEY,
+#     user TEXT,
+#     text TEXT,
+#     hashtags TEXT,
+#     location TEXT,
+#     coordinates TEXT,
+#     date TEXT,
+#     followers INTEGER,
+#     retweets INTEGER,
+#     favourites INTEGER,
+#     replyToId INTEGER
+# )'''
+# )
 
 def insertTweet(values):
-    c.execute("INSERT INTO tweets (id,user,text,hashtags,location,date,followers,retweets,favourites,replyToId) VALUES (?,?,?,?,?,?,?,?,?,?);",values)
+    conn = sqlite3.connect('ukpoliticstweets.db')
+    c = conn.cursor()
+    c.execute("INSERT INTO tweets (id,user,text,hashtags,location,coordinates,date,followers,retweets,favourites,replyToId) VALUES (?,?,?,?,?,?,?,?,?,?,?);",values)
     conn.commit()
+    conn.close()
 
 """ def select(columns,criteria):
     sql = "SELECT "
@@ -40,7 +43,11 @@ def insertTweet(values):
     return c.fetchall() """
 
 def delete(table,criteria):
+    conn = sqlite3.connect('ukpoliticstweets.db')
+    c = conn.cursor()
     c.execute('DELETE FROM ? WHERE ?;',(table,criteria))
+    conn.commit()
+    conn.close()
 
 tweet = (101,"sam","despite all the negative press covfefe","#gymladboris","right here","right now",2000,1999,1998,0)
 
@@ -48,4 +55,3 @@ tweet = (101,"sam","despite all the negative press covfefe","#gymladboris","righ
 #print(select(("id","text"),("followers = 2000","retweets = 1999"))
 #print(select(("id","text"),("followers",2000,"retweets",1999)))
 
-conn.close()
