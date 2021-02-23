@@ -1,5 +1,5 @@
 import tweepy
-from dbcontrol import insertTweet
+from dbcontrol import *
 
 # Variables that contains the credentials to access Twitter API
 ACCESS_TOKEN = '3099117383-ybROCSwGlrqSNgNWYAGU1PlZ5FNFkzdyYDruplo'
@@ -40,10 +40,12 @@ class StreamListener(tweepy.StreamListener):
         data.append(status.id)
         data.append(status.user.id)
         data.append(status.text)
+
         hashtags = ""
         for tag in status.entities["hashtags"]:
             hashtags = hashtags + tag["text"] + ","
         data.append(hashtags)
+        
         data.append(str(status.user.location))
         data.append(str(status.coordinates))
         data.append(str(status.created_at))
@@ -51,8 +53,15 @@ class StreamListener(tweepy.StreamListener):
         data.append(status.retweet_count)
         data.append(status.favorite_count)
         data.append(status.in_reply_to_user_id)
+
+
         return data
 
+conPhrases = ["tories","borisjohnson","conservative","conservatives","tory","toriesout","conservativeparty","fuckthetories","backboris",
+            "toryparty","torygovernment","torymps","votetory","torygovt","theresamay","torybrexit","toryvoters"]
+labPhrases = []
+libdemPhrases = []
+greenPhrases = []
 sl = StreamListener()
 stream = tweepy.Stream(auth=api.auth, listener=sl)
 stream.filter(track=["libdem,libdemfightback,tory,toryparty,labour,labourparty"],languages=["en"])
