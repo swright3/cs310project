@@ -59,9 +59,10 @@ class StreamListener(tweepy.StreamListener):
 
 conPhrases = ["tories","borisjohnson","conservative","conservatives","tory","toriesout","conservativeparty","fuckthetories","backboris",
             "toryparty","torygovernment","torymps","votetory","torygovt","theresamay","torybrexit","toryvoters"]
-labPhrases = []
-libdemPhrases = []
-greenPhrases = []
+labPhrases = ["labour","labourparty","votelabour","labourgovernment","labourmembers","starmerout","keirstarmer","uklabour",
+            "jeremycorbyn","starmer","corbyn"]
+libdemPhrases = ["libdems","libdem","libdemparty","liberaldemocrat","liberaldemocrats","votelibdem"]
+greenPhrases = ["green","greenparty","greens","greenpartyuk","greensuk"]
 sl = StreamListener()
 stream = tweepy.Stream(auth=api.auth, listener=sl)
 stream.filter(track=["libdem,libdemfightback,tory,toryparty,labour,labourparty"],languages=["en"])
