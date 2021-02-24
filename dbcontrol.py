@@ -26,7 +26,7 @@ def clearTweets():
 def insertTweet(values):
     conn = sqlite3.connect('ukpoliticstweets.db')
     c = conn.cursor()
-    c.execute("INSERT INTO tweets (id,user,text,hashtags,location,coordinates,date,followers,retweets,favourites,replyToId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);",values)
+    c.execute("INSERT INTO tweets (id,user,text,hashtags,location,coordinates,date,followers,retweets,favourites,replyToId,party) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);",values)
     conn.commit()
     conn.close()
 

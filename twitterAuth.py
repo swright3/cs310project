@@ -1,6 +1,7 @@
 import tweepy
 from dbcontrol import *
 from mpparser import *
+import pandas as pd
 
 # Variables that contains the credentials to access Twitter API
 ACCESS_TOKEN = '3099117383-ybROCSwGlrqSNgNWYAGU1PlZ5FNFkzdyYDruplo'
@@ -31,9 +32,11 @@ class StreamListener(tweepy.StreamListener):
         #print(status.entities["text"])
         tweet = self.extractData(status)
         insertTweet(tweet)
+        print("tweet inserted")
         
     def on_error(self, status_code):
         if status_code == 420:
+            print("error")
             return False
 
     def extractData(self, status):
@@ -54,7 +57,20 @@ class StreamListener(tweepy.StreamListener):
         data.append(status.retweet_count)
         data.append(status.favorite_count)
         data.append(status.in_reply_to_user_id)
-
+        party = ''
+        for phrase in conPhrases:
+            if phrase in status.text.lower():
+                party = party + 'con'
+        for phrase in labPhrases:
+            if phrase in status.text.lower():
+                party = party + 'lab'
+        for phrase in libdemPhrases:
+            if phrase in status.text.lower():
+                party = party + 'lib'
+        for phrase in greenPhrases:
+            if phrase in status.text.lower():
+                party = party + 'grn'
+        data.append(party)
 
         return data
 
@@ -62,7 +78,7 @@ conPhrases = ["tories","conservative","conservatives","tory","toriesout","conser
             "toryparty","torygovernment","torymps","votetory","torygovt","theresamay","torybrexit","toryvoters"]
 labPhrases = ["labour","labourparty","votelabour","labourgovernment","labourmembers","starmerout","uklabour","starmer","corbyn"]
 libdemPhrases = ["libdems","libdem","libdemparty","liberaldemocrat","liberaldemocrats","votelibdem","ldconf"]
-greenPhrases = ["green","greenparty","greens","greenpartyuk","greensuk"]
+greenPhrases = ["green","greenparty","greens","greenpartyuk","greensuk","jonathanbartley","sianberry","siânberry"]
 
 def mpPhrases(conPhrases,labPhrases,libdemPhrases,greenPhrases):
     mpnames = getMParray()
@@ -78,8 +94,10 @@ def mpPhrases(conPhrases,labPhrases,libdemPhrases,greenPhrases):
             greenPhrases.append(mp[0])
 
 mpPhrases(conPhrases,labPhrases,libdemPhrases,greenPhrases)
+allPhrases = conPhrases + labPhrases + libdemPhrases + greenPhrases
+print(len(allPhrases))
 
-# sl = StreamListener()
-# stream = tweepy.Stream(auth=api.auth, listener=sl)
-# stream.filter(track=["libdem,libdemfightback,tory,toryparty,labour,labourparty"],languages=["en"])
+sl = StreamListener()
+stream = tweepy.Stream(auth=api.auth, listener=sl)
+stream.filter(track=allPhrases,languages=["en"])
 
