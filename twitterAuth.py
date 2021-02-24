@@ -76,7 +76,7 @@ class StreamListener(tweepy.StreamListener):
 
 conPhrases = ["tories","conservative","conservatives","tory","toriesout","conservativeparty","fuckthetories","backboris",
             "toryparty","torygovernment","torymps","votetory","torygovt","theresamay","torybrexit","toryvoters"]
-labPhrases = ["labour","labourparty","votelabour","labourgovernment","labourmembers","starmerout","uklabour","starmer","corbyn"]
+labPhrases = ["labour","labourparty","votelabour","labourgovernment","labourmembers","starmerout","uklabour","starmer","corbyn","jeremycorbyn"]
 libdemPhrases = ["libdems","libdem","libdemparty","liberaldemocrat","liberaldemocrats","votelibdem","ldconf"]
 greenPhrases = ["green","greenparty","greens","greenpartyuk","greensuk","jonathanbartley","sianberry","siânberry"]
 
@@ -93,9 +93,22 @@ def mpPhrases(conPhrases,labPhrases,libdemPhrases,greenPhrases):
         elif mp[1] == 'Green':
             greenPhrases.append(mp[0])
 
-mpPhrases(conPhrases,labPhrases,libdemPhrases,greenPhrases)
+def mpPhrases2(conPhrases,labPhrases,libdemPhrases,greenPhrases):
+    data = pd.read_csv('mptwitter.csv')
+    for row in data.index:
+        if data['Party'][row] == 'Conservative':
+            conPhrases.append(data['Screen name'][row].replace('@',''))
+        elif data['Party'][row] == 'Labour':
+            labPhrases.append(data['Screen name'][row].replace('@',''))
+        elif data['Party'][row] == 'Liberal Democrat':
+            libdemPhrases.append(data['Screen name'][row].replace('@',''))
+        elif data['Party'][row] == 'Green Party':
+            greenPhrases.append(data['Screen name'][row].replace('@',''))
+
+mpPhrases2(conPhrases,labPhrases,libdemPhrases,greenPhrases)
+# mpPhrases(conPhrases,labPhrases,libdemPhrases,greenPhrases)
 allPhrases = conPhrases + labPhrases + libdemPhrases + greenPhrases
-print(len(allPhrases))
+print(allPhrases)
 
 sl = StreamListener()
 stream = tweepy.Stream(auth=api.auth, listener=sl)
