@@ -113,5 +113,5 @@ phrases2 = allPhrases[len(allPhrases)//2:]
 
 sl = StreamListener()
 stream = tweepy.Stream(auth=api.auth, listener=sl)
-stream.filter(track=phrases1,languages=["en"])
+stream.filter(track=phrases2,languages=["en"])
 

@@ -149,3 +149,4 @@ pastresults.csv
 # database files
 *.db
 *.csv
+ukpoliticstweets.db
