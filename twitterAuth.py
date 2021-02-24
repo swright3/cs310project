@@ -1,5 +1,6 @@
 import tweepy
 from dbcontrol import *
+from mpparser import *
 
 # Variables that contains the credentials to access Twitter API
 ACCESS_TOKEN = '3099117383-ybROCSwGlrqSNgNWYAGU1PlZ5FNFkzdyYDruplo'
@@ -57,13 +58,28 @@ class StreamListener(tweepy.StreamListener):
 
         return data
 
-conPhrases = ["tories","borisjohnson","conservative","conservatives","tory","toriesout","conservativeparty","fuckthetories","backboris",
+conPhrases = ["tories","conservative","conservatives","tory","toriesout","conservativeparty","fuckthetories","backboris",
             "toryparty","torygovernment","torymps","votetory","torygovt","theresamay","torybrexit","toryvoters"]
-labPhrases = ["labour","labourparty","votelabour","labourgovernment","labourmembers","starmerout","keirstarmer","uklabour",
-            "jeremycorbyn","starmer","corbyn"]
-libdemPhrases = ["libdems","libdem","libdemparty","liberaldemocrat","liberaldemocrats","votelibdem"]
+labPhrases = ["labour","labourparty","votelabour","labourgovernment","labourmembers","starmerout","uklabour","starmer","corbyn"]
+libdemPhrases = ["libdems","libdem","libdemparty","liberaldemocrat","liberaldemocrats","votelibdem","ldconf"]
 greenPhrases = ["green","greenparty","greens","greenpartyuk","greensuk"]
-sl = StreamListener()
-stream = tweepy.Stream(auth=api.auth, listener=sl)
-stream.filter(track=["libdem,libdemfightback,tory,toryparty,labour,labourparty"],languages=["en"])
+
+def mpPhrases(conPhrases,labPhrases,libdemPhrases,greenPhrases):
+    mpnames = getMParray()
+    for mp in mpnames:
+        mp[0] = mp[0].replace(' ','').lower()
+        if mp[1] == 'Conservative':
+            conPhrases.append(mp[0])
+        elif mp[1] == 'Labour':
+            labPhrases.append(mp[0])
+        elif mp[1] == 'Lib Dem':
+            libdemPhrases.append(mp[0])
+        elif mp[1] == 'Green':
+            greenPhrases.append(mp[0])
+
+mpPhrases(conPhrases,labPhrases,libdemPhrases,greenPhrases)
+
+# sl = StreamListener()
+# stream = tweepy.Stream(auth=api.auth, listener=sl)
+# stream.filter(track=["libdem,libdemfightback,tory,toryparty,labour,labourparty"],languages=["en"])
 

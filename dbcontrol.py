@@ -1,16 +1,8 @@
 import sqlite3
 
-def connectToDB():
+def clearTweets():
     conn = sqlite3.connect('ukpoliticstweets.db')
     c = conn.cursor()
-    return c
-
-def commitToDB():
-    conn.commit()
-    conn.close()
-
-def clearTweets():
-    c = connectToDB()
     c.execute("DROP TABLE IF EXISTS tweets")
     
     c.execute('''CREATE TABLE tweets (
@@ -28,12 +20,15 @@ def clearTweets():
         party TEXT
     )'''
     )
-    commitToDB()
+    conn.commit()
+    conn.close()
 
 def insertTweet(values):
-    c = connectToDB()
+    conn = sqlite3.connect('ukpoliticstweets.db')
+    c = conn.cursor()
     c.execute("INSERT INTO tweets (id,user,text,hashtags,location,coordinates,date,followers,retweets,favourites,replyToId) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);",values)
-    commitToDB()
+    conn.commit()
+    conn.close()
 
 """ def select(columns,criteria):
     sql = "SELECT "
@@ -51,13 +46,15 @@ def insertTweet(values):
     return c.fetchall() """
 
 def delete(table,criteria):
-    c = connectToDB()
+    conn = sqlite3.connect('ukpoliticstweets.db')
+    c = conn.cursor()
     c.execute('DELETE FROM ? WHERE ?;',(table,criteria))
-    commitToDB()
+    conn.commit()
+    conn.close()
 
 
-clearTweets()
-tweet = (101,"sam","despite all the negative press covfefe","#gymladboris","right here","right now",2000,1999,1998,0)
+#clearTweets()
+#tweet = (101,"sam","despite all the negative press covfefe","#gymladboris","right here","right now",2000,1999,1998,0)
 
 ##insertTweet(tweet)
 #print(select(("id","text"),("followers = 2000","retweets = 1999"))

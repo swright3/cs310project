@@ -31,8 +31,11 @@ def getMPs(table):
     #print(mps)
     return mps
 
-source = getHTML("https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election")
-table = getTable(source)
-mparray = getMPs(table)
-with open("mpnames.txt","w") as f:
-    f.write(str(mparray))
+def getMParray():
+    source = getHTML("https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election")
+    table = getTable(source)
+    mparray = getMPs(table)
+    return mparray
+
+#with open("mpnames.txt","w") as f:
+#    f.write(str(mparray))
