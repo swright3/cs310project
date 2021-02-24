@@ -28,8 +28,11 @@ def getMPs(table):
                 mps.append([columns[3].text.strip(),"Lib Dem"])
             elif columns[5].text.rstrip() == "Green":
                 mps.append([columns[3].text.strip(),"Green"])
-    print(mps)
+    #print(mps)
+    return mps
 
 source = getHTML("https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election")
 table = getTable(source)
-getMPs(table)
+mparray = getMPs(table)
+with open("mpnames.txt","w") as f:
+    f.write(str(mparray))
