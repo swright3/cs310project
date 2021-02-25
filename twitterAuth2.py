@@ -1,5 +1,5 @@
 import tweepy
-from dbcontrol import *
+from dbcontrol2 import *
 from mpparser import *
 import pandas as pd
 
@@ -57,20 +57,20 @@ class StreamListener(tweepy.StreamListener):
         data.append(status.retweet_count)
         data.append(status.favorite_count)
         data.append(status.in_reply_to_user_id)
-        party = ''
-        for phrase in conPhrases:
-            if phrase in status.text.lower():
-                party = party + 'con'
-        for phrase in labPhrases:
-            if phrase in status.text.lower():
-                party = party + 'lab'
-        for phrase in libdemPhrases:
-            if phrase in status.text.lower():
-                party = party + 'lib'
-        for phrase in greenPhrases:
-            if phrase in status.text.lower():
-                party = party + 'grn'
-        data.append(party)
+        # party = ''
+        # for phrase in conPhrases:
+        #     if phrase in status.text.lower():
+        #         party = party + 'con'
+        # for phrase in labPhrases:
+        #     if phrase in status.text.lower():
+        #         party = party + 'lab'
+        # for phrase in libdemPhrases:
+        #     if phrase in status.text.lower():
+        #         party = party + 'lib'
+        # for phrase in greenPhrases:
+        #     if phrase in status.text.lower():
+        #         party = party + 'grn'
+        data.append('')
 
         return data
 

@@ -1,7 +1,7 @@
 import sqlite3
 
 def clearTweets():
-    conn = sqlite3.connect('ukpoliticstweets.db')
+    conn = sqlite3.connect('ukpoliticstweets2.db')
     c = conn.cursor()
     c.execute("DROP TABLE IF EXISTS tweets")
     
