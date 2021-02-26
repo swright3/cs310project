@@ -25,7 +25,7 @@ def clearTweets():
     conn.close()
 
 def insertTweet(values):
-    conn = sqlite3.connect('ukpoliticstweets.db')
+    conn = sqlite3.connect('ukpoliticstweets2.db')
     c = conn.cursor()
     c.execute("INSERT INTO tweets (id,user,text,hashtags,location,coordinates,date,followers,retweets,favourites,replyToId,party) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);",values)
     c.close()
@@ -48,14 +48,14 @@ def insertTweet(values):
     return c.fetchall() """
 
 def delete(table,criteria):
-    conn = sqlite3.connect('ukpoliticstweets.db')
+    conn = sqlite3.connect('ukpoliticstweets2.db')
     c = conn.cursor()
     c.execute('DELETE FROM ? WHERE ?;',(table,criteria))
     conn.commit()
     conn.close()
 
 
-#clearTweets()
+clearTweets()
 #tweet = (101,"sam","despite all the negative press covfefe","#gymladboris","right here","right now",2000,1999,1998,0)
 
 ##insertTweet(tweet)
