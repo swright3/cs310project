@@ -2,6 +2,7 @@ import tweepy
 from dbcontrol import *
 from mpparser import *
 import pandas as pd
+import time
 
 # Variables that contains the credentials to access Twitter API
 ACCESS_TOKEN = '3099117383-ybROCSwGlrqSNgNWYAGU1PlZ5FNFkzdyYDruplo'
@@ -36,8 +37,17 @@ class StreamListener(tweepy.StreamListener):
         
     def on_error(self, status_code):
         if status_code == 420:
-            print("error")
-            return False
+            print("420 error")
+            time.sleep(60)
+            return True # continue listening
+        logger.info('Error: status %s', str(status_code))
+        return True # continue listening
+
+    def on_timeout(self):
+        logger.info('Timeout: pausing 60s')
+        time.sleep(60)
+        return True  # continue listening
+
 
     def extractData(self, status):
         data = []
@@ -113,5 +123,10 @@ phrases2 = allPhrases[len(allPhrases)//2:]
 
 sl = StreamListener()
 stream = tweepy.Stream(auth=api.auth, listener=sl)
-stream.filter(track=phrases1,languages=["en"])
-
+while True:
+    try:
+        stream.filter(track=phrases1,languages=["en"])
+    except:
+        print("error occurred")
+        time.sleep(60)
+        continue

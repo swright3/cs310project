@@ -55,7 +55,7 @@ def delete(table,criteria):
     conn.close()
 
 
-clearTweets()
+#clearTweets()
 #tweet = (101,"sam","despite all the negative press covfefe","#gymladboris","right here","right now",2000,1999,1998,0)
 
 ##insertTweet(tweet)
