@@ -1,11 +1,4 @@
 from dbcontrol import *
-from twitterAuth import mpPhrases
-
-conPhrases = ["tories","conservative","conservatives","tory","toriesout","conservativeparty","fuckthetories","backboris",
-            "toryparty","torygovernment","torymps","votetory","torygovt","theresamay","torybrexit","toryvoters"]
-labPhrases = ["labour","labourparty","votelabour","labourgovernment","labourmembers","starmerout","uklabour","starmer","corbyn","jeremycorbyn"]
-libdemPhrases = ["libdems","libdem","libdemparty","liberaldemocrat","liberaldemocrats","votelibdem","ldconf"]
-greenPhrases = ["green","greenparty","greens","greenpartyuk","greensuk","jonathanbartley","sianberry","siânberry"]
 
 def getDB1Tweets():
     conn = sqlite3.connect('ukpoliticstweets.db')
@@ -27,4 +20,12 @@ def conTweets():
     conn.commit()
     conn.close()
 
-conTweets()
+def getPhrases():
+    with open('phrases1.txt','r') as f:
+        phrases1 = f.read().split(',')
+    with open('phrases2.txt','r') as f:
+        phrases2 = f.read().split(',')
+    print(phrases1[:-1])
+
+#conTweets()
+getPhrases()
