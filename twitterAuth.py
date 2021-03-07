@@ -115,11 +115,20 @@ def mpPhrases2(conPhrases,labPhrases,libdemPhrases,greenPhrases):
         elif data['Party'][row] == 'Green Party':
             greenPhrases.append(data['Screen name'][row].replace('@',''))
 
+def mpPhrasesToText(phrases1,phrases2):
+    with open('phrases1.txt','w') as f:
+        for phrase in phrases1:
+            f.write(phrase + ',')
+    with open('phrases2.txt','w') as f:
+        for phrase in phrases2:
+            f.write(phrase + ',')
+
 mpPhrases2(conPhrases,labPhrases,libdemPhrases,greenPhrases)
 # mpPhrases(conPhrases,labPhrases,libdemPhrases,greenPhrases)
 allPhrases = conPhrases + labPhrases + libdemPhrases + greenPhrases
 phrases1 = allPhrases[:len(allPhrases)//2]
 phrases2 = allPhrases[len(allPhrases)//2:]
+#mpPhrasesToText(phrases1,phrases2)
 
 sl = StreamListener()
 stream = tweepy.Stream(auth=api.auth, listener=sl)

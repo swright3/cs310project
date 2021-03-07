@@ -1,3 +1,7 @@
 import nltk
 
-nltk.download(["names","stopwords","state_union","twitter_samples","movie_reviews","averaged_perceptron_tagger","vader_lexicon","punkt"])
+stopwords = nltk.corpus.stopwords.words("english")
+words = [w for w in nltk.corpus.state_union.words() if w.isalpha() and (w.lower() not in stopwords)]
+
+fd = nltk.FreqDist(words)
+print(fd.tabulate(5))
