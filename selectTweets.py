@@ -14,7 +14,13 @@ def conTweets():
     for tweet in tweets:
         print(tweet)
         c.execute('INSERT INTO vTweets (newId,id,user,text,hashtags,location,coordinates,date,followers,retweets,favourites,replyToId,party) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);',tweet)
-    c.execute('SELECT * FROM vTweets LIMIT 5;')
+    phrases1, phrases2 = getPhrases()
+    placeholders = ''
+    for x in range(len(phrases1)):
+        placeholders += '?,'
+    placeholders = placeholders[:-1] + ');'
+    sql = 'SELECT * FROM vTweets WHERE text MATCH (' + placeholders
+    c.execute(sql,tuple(phrases1))
     print(c.fetchall())
     c.close()
     conn.commit()
@@ -25,7 +31,12 @@ def getPhrases():
         phrases1 = f.read().split(',')
     with open('phrases2.txt','r') as f:
         phrases2 = f.read().split(',')
-    print(phrases1[:-1])
+    return phrases1[:-1], phrases2[:-1]
 
-#conTweets()
-getPhrases()
+def formatPhrases(phrases):
+    formatted = ''
+    for phrase in phrases:
+        formatted += (phrase + ' OR ')
+    return formatted[:-4]
+
+conTweets()
