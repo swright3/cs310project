@@ -27,8 +27,12 @@ def clearTweets():
 def sortedTweets():
     conn = sqlite3.connect('sortedTweets.db')
     c = conn.cursor()
+    c.execute("DROP TABLE IF EXISTS conTweets")
+    c.execute("DROP TABLE IF EXISTS labTweets")
+    c.execute("DROP TABLE IF EXISTS libdemTweets")
+    c.execute("DROP TABLE IF EXISTS greenTweets")
     c.execute('''CREATE TABLE conTweets (
-        newId INTEGER PRIMARY KEY AUTOINCREMENT,
+        conId INTEGER PRIMARY KEY AUTOINCREMENT,
         id INTEGER,
         user TEXT,
         text TEXT,
@@ -44,7 +48,7 @@ def sortedTweets():
     )'''
     )
     c.execute('''CREATE TABLE labTweets (
-        newId INTEGER PRIMARY KEY AUTOINCREMENT,
+        labId INTEGER PRIMARY KEY AUTOINCREMENT,
         id INTEGER,
         user TEXT,
         text TEXT,
@@ -60,7 +64,7 @@ def sortedTweets():
     )'''
     )
     c.execute('''CREATE TABLE libdemTweets (
-        newId INTEGER PRIMARY KEY AUTOINCREMENT,
+        libdemId INTEGER PRIMARY KEY AUTOINCREMENT,
         id INTEGER,
         user TEXT,
         text TEXT,
@@ -76,7 +80,7 @@ def sortedTweets():
     )'''
     )
     c.execute('''CREATE TABLE greenTweets (
-        newId INTEGER PRIMARY KEY AUTOINCREMENT,
+        greenId INTEGER PRIMARY KEY AUTOINCREMENT,
         id INTEGER,
         user TEXT,
         text TEXT,
@@ -124,7 +128,7 @@ def delete(table,criteria):
     conn.commit()
     conn.close()
 
-sortedTweets()
+#sortedTweets()
 #clearTweets()
 #tweet = (101,"sam","despite all the negative press covfefe","#gymladboris","right here","right now",2000,1999,1998,0)
 

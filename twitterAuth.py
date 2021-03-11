@@ -115,12 +115,18 @@ def mpPhrases2(conPhrases,labPhrases,libdemPhrases,greenPhrases):
         elif data['Party'][row] == 'Green Party':
             greenPhrases.append(data['Screen name'][row].replace('@',''))
 
-def mpPhrasesToText(phrases1,phrases2):
-    with open('phrases1.txt','w') as f:
-        for phrase in phrases1:
+def mpPhrasesToText(conPhrases,labPhrases,libdemPhrases,greenPhrases):
+    with open('conPhrases.txt','w') as f:
+        for phrase in conPhrases:
             f.write(phrase + ',')
-    with open('phrases2.txt','w') as f:
-        for phrase in phrases2:
+    with open('labPhrases.txt','w') as f:
+        for phrase in labPhrases:
+            f.write(phrase + ',')
+    with open('libdemPhrases.txt','w') as f:
+        for phrase in libdemPhrases:
+            f.write(phrase + ',')
+    with open('greenPhrases.txt','w') as f:
+        for phrase in greenPhrases:
             f.write(phrase + ',')
 
 mpPhrases2(conPhrases,labPhrases,libdemPhrases,greenPhrases)
@@ -128,7 +134,7 @@ mpPhrases2(conPhrases,labPhrases,libdemPhrases,greenPhrases)
 allPhrases = conPhrases + labPhrases + libdemPhrases + greenPhrases
 phrases1 = allPhrases[:len(allPhrases)//2]
 phrases2 = allPhrases[len(allPhrases)//2:]
-#mpPhrasesToText(phrases1,phrases2)
+#mpPhrasesToText(conPhrases,labPhrases,libdemPhrases,greenPhrases)
 
 sl = StreamListener()
 stream = tweepy.Stream(auth=api.auth, listener=sl)
