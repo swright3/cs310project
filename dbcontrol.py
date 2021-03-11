@@ -24,6 +24,76 @@ def clearTweets():
     conn.commit()
     conn.close()
 
+def sortedTweets():
+    conn = sqlite3.connect('sortedTweets.db')
+    c = conn.cursor()
+    c.execute('''CREATE TABLE conTweets (
+        newId INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER,
+        user TEXT,
+        text TEXT,
+        hashtags TEXT,
+        location TEXT,
+        coordinates TEXT,
+        date TEXT,
+        followers INTEGER,
+        retweets INTEGER,
+        favourites INTEGER,
+        replyToId INTEGER,
+        sentiment TEXT
+    )'''
+    )
+    c.execute('''CREATE TABLE labTweets (
+        newId INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER,
+        user TEXT,
+        text TEXT,
+        hashtags TEXT,
+        location TEXT,
+        coordinates TEXT,
+        date TEXT,
+        followers INTEGER,
+        retweets INTEGER,
+        favourites INTEGER,
+        replyToId INTEGER,
+        sentiment TEXT
+    )'''
+    )
+    c.execute('''CREATE TABLE libdemTweets (
+        newId INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER,
+        user TEXT,
+        text TEXT,
+        hashtags TEXT,
+        location TEXT,
+        coordinates TEXT,
+        date TEXT,
+        followers INTEGER,
+        retweets INTEGER,
+        favourites INTEGER,
+        replyToId INTEGER,
+        sentiment TEXT
+    )'''
+    )
+    c.execute('''CREATE TABLE greenTweets (
+        newId INTEGER PRIMARY KEY AUTOINCREMENT,
+        id INTEGER,
+        user TEXT,
+        text TEXT,
+        hashtags TEXT,
+        location TEXT,
+        coordinates TEXT,
+        date TEXT,
+        followers INTEGER,
+        retweets INTEGER,
+        favourites INTEGER,
+        replyToId INTEGER,
+        sentiment TEXT
+    )'''
+    )
+    conn.commit()
+    conn.close()
+
 def insertTweet(values):
     conn = sqlite3.connect('ukpoliticstweets.db')
     c = conn.cursor()
@@ -54,7 +124,7 @@ def delete(table,criteria):
     conn.commit()
     conn.close()
 
-
+sortedTweets()
 #clearTweets()
 #tweet = (101,"sam","despite all the negative press covfefe","#gymladboris","right here","right now",2000,1999,1998,0)
 
