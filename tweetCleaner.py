@@ -12,3 +12,5 @@ for tweet in conTweets:
     tokenized.append(nltk.word_tokenize(tweet[2]))
     conTokens.append(tokenized)
 print(conTokens)
+
+nltk.download('wordnet')
