@@ -1,7 +1,10 @@
-import nltk
+from nltk.sentiment import *
+import sqlite3
 
-stopwords = nltk.corpus.stopwords.words("english")
-words = [w for w in nltk.corpus.state_union.words() if w.isalpha() and (w.lower() not in stopwords)]
-
-fd = nltk.FreqDist(words)
-print(fd.tabulate(5))
+conn = sqlite3.connect('sortedTweets.db')
+c = conn.cursor()
+c.execute('SELECT * FROM conTweets WHERE conId<11')
+conTweets = c.fetchall()
+sia = SentimentIntensityAnalyzer()
+for tweet in conTweets:
+    print(sia.polarity_scores(tweet[3]),tweet[3])
