@@ -3,13 +3,14 @@ import pandas as pd
 import numpy
 import re
 import string
+from nltk.corpus import wordnet as wn
 
 def tweetCleaner(tweets):
     tokenizedTweets = tokenize(tweets)
     normalizedTweets = normalize(tokenizedTweets)
     lemmatizedTweets = lemmatize(normalizedTweets)
     cleanedTweets = clean(lemmatizedTweets)
-    return(cleanedTweets)
+    return cleanedTweets
 
 def tokenize(tweets):
     tokenizedTweets = []
@@ -52,6 +53,14 @@ def lemmatize(normalizedTweets):
             lemmatizedWords.append(lemmatizer.lemmatize(word, pos))
         lemmatizedTweets.append(lemmatizedWords)
     return lemmatizedTweets
+
+def tweetsToTXT(tweets,file):
+    with open(file,'w') as f:
+        f.write(tweets)
+
+def tweetsFromTXT(file):
+    with open(file,'r') as f:
+        return f.read()
 
 # df = pd.read_csv('training.1600000.processed.noemoticon.csv',header=0,names=['target','id','date','flag','user','text'])
 # df = df.drop(columns=['id','date','flag','user'])
