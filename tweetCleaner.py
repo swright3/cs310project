@@ -52,7 +52,6 @@ def lemmatize(normalizedTweets):
             lemmatizedWords.append(lemmatizer.lemmatize(word, pos))
         lemmatizedTweets.append(lemmatizedWords)
     return lemmatizedTweets
-        
 
 # df = pd.read_csv('training.1600000.processed.noemoticon.csv',header=0,names=['target','id','date','flag','user','text'])
 # df = df.drop(columns=['id','date','flag','user'])
