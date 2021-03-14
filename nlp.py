@@ -4,7 +4,8 @@ import pandas as pd
 import numpy
 from tweetCleaner import *
 from sklearn.model_selection import KFold
-from multiprocessing.dummy import Pool as ThreadPool
+import multiprocessing
+from nltk.corpus import wordnet as wn
 
 def tweetsForModel(tweets):
     modelTweets = []
@@ -33,21 +34,27 @@ def trainModel(traintest):
     #features = classifier.show_most_informative_features(10)
     return accuracy
 
-df = pd.read_csv('training.1600000.processed.noemoticon.csv',header=0,names=['target','id','date','flag','user','text'])
-df = df.drop(columns=['id','date','flag','user'])
-df = df.to_numpy()
-posTweets = []
-negTweets = []
-for tweet in df:
-    if int(tweet[0]) == 0:
-        negTweets.append(tweet[1])
-    else:
-        posTweets.append(tweet[1])
+if __name__ == '__main__':
+    df = pd.read_csv('training.1600000.processed.noemoticon.csv',header=0,names=['target','id','date','flag','user','text'])
+    df = df.drop(columns=['id','date','flag','user'])
+    df = df.to_numpy()
+    posTweets = []
+    negTweets = []
+    for tweet in df:
+        if int(tweet[0]) == 0:
+            negTweets.append(tweet[1])
+        else:
+            posTweets.append(tweet[1])
 
-cleanPosTweets = tweetCleaner(posTweets)
-tweetsToTXT(cleanPosTweets,'cleanPosTweets.txt')
-cleanNegTweets = tweetCleaner(negTweets)
-tweetsToTXT(cleanNegTweets,'cleanNegTweets.txt')
+    cleanPosTweets = []
+    cleanNegTweets = []
+    print(':)')
+    with multiprocessing.Pool(processes=4) as pool:
+        cleanPosTweets = pool.map(tweetCleanerP,posTweets)
+        cleanNegTweets = pool.map(tweetCleanerP,negTweets)
+    tweetsToTXT(cleanPosTweets,'cleanPosTweets.txt')
+    tweetsToTXT(cleanNegTweets,'cleanNegTweets.txt')
+
 # modelPosTweets = tweetsForModel(cleanPosTweets)
 # modelNegTweets = tweetsForModel(cleanNegTweets)
 # posDataset = []
