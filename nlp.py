@@ -6,6 +6,8 @@ from tweetCleaner import *
 from sklearn.model_selection import KFold
 import multiprocessing
 from nltk.corpus import wordnet as wn
+import ast
+from multiprocessing.dummy import Pool as ThreadPool
 
 def tweetsForModel(tweets):
     modelTweets = []
@@ -46,38 +48,53 @@ if __name__ == '__main__':
         else:
             posTweets.append(tweet[1])
 
-    cleanPosTweets = []
-    cleanNegTweets = []
+    # # with open('cleanPosTweets.txt','r',encoding='utf-8') as f:
+    # #     cleanPosTweets = f.read()
+    # # with open('cleanNegTweets.txt','r',encoding='utf-8') as f:
+    # #     cleanNegTweets = f.read()
+
     print(':)')
     with multiprocessing.Pool(processes=4) as pool:
         cleanPosTweets = pool.map(tweetCleanerP,posTweets)
         cleanNegTweets = pool.map(tweetCleanerP,negTweets)
-    tweetsToTXT(cleanPosTweets,'cleanPosTweets.txt')
-    tweetsToTXT(cleanNegTweets,'cleanNegTweets.txt')
+    tweetsToCSV(cleanPosTweets,'cleanPosTweets.pkl')
+    tweetsToCSV(cleanNegTweets,'cleanNegTweets.pkl')
+    cleanPosTweets = tweetsFromCSV('cleanPosTweets.pkl')
+    cleanNegTweets = tweetsFromCSV('cleanNegTweets.pkl')
+    cleanPosTweets = cleanPosTweets['tweets'].tolist()
+    cleanNegTweets = cleanNegTweets['tweets'].tolist()
 
-# modelPosTweets = tweetsForModel(cleanPosTweets)
-# modelNegTweets = tweetsForModel(cleanNegTweets)
-# posDataset = []
-# negDataset = []
-# for tweet in modelPosTweets:
-#     posDataset.append((tweet,"positive"))
-# for tweet in modelNegTweets:
-#     negDataset.append((tweet,"negative"))
-# global dataset
-# dataset = posDataset + negDataset
+    modelPosTweets = tweetsForModel(cleanPosTweets)
+    modelNegTweets = tweetsForModel(cleanNegTweets)
+    posDataset = []
+    negDataset = []
+    for tweet in modelPosTweets:
+        posDataset.append((tweet,"positive"))
+    for tweet in modelNegTweets:
+        negDataset.append((tweet,"negative"))
+    global dataset
+    dataset = posDataset + negDataset
+    
+    testResults = []
+    for x in range(20):
+        kfold = KFold(10, shuffle=True, random_state=1)
+        splitData = kfold.split(dataset)
 
-# kfold = KFold(10, shuffle=True, random_state=1)
-# splitData = kfold.split(dataset)
+        traintest = []
+        for train, test in splitData:
+            traintest.append([train,test])
 
-# traintest = []
-# for train, test in splitData:
-#     traintest.append([train,test])
+        pool = ThreadPool(4)
+        results = []
+        results = pool.map(trainModel,traintest)
+        testResults.append(["test"+str(x),results])
+    # with multiprocessing.Pool(processes=4) as pool:
+    #     results = pool.map(trainModel,traintest)
 
-# pool = ThreadPool(4)
-# results = []
-# results = pool.map(trainModel, traintest)
+    with open('testResults.txt','w') as f:
+        f.write(str(testResults))
 
-# print(results)
+
 # # for train, test in kfold.split(posDataset):
 # #     print('train')
 # #     for x in train:
@@ -86,8 +103,3 @@ if __name__ == '__main__':
 # #     for y in test:
 # #         print(posDataset[y])
 
-# # pool = ThreadPool(4)
-# # results = []
-# # results = pool.starmap(trainModel,)
-# # for train, test in splitData:
-# #     results.append(trainModel(train,test))

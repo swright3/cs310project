@@ -72,7 +72,7 @@ def cleanP(lemmatizedTweet):
                     '(?:%[0-9a-fA-F][0-9a-fA-F]))+','',word)
         word = re.sub("(@[A-Za-z0-9_]+)","",word)
 
-        if len(word)>0 and word not in nltk.corpus.stopwords.words('english') and word not in string.punctuation:
+        if len(word)>0 and (word.lower() not in nltk.corpus.stopwords.words('english')) and word not in string.punctuation:
             cleanedWords.append(word.lower())
     return cleanedWords
 
@@ -111,9 +111,16 @@ def tweetsToTXT(tweets,file):
     with open(file,'w',encoding="utf-8") as f:
         f.write(str(tweets))
 
+def tweetsToCSV(tweets,file):
+    df = pd.DataFrame(((tweet,) for tweet in tweets), columns=['tweets'])
+    df.to_pickle(file)
+
 def tweetsFromTXT(file):
     with open(file,'r') as f:
         return f.read()
+
+def tweetsFromCSV(file):
+    return pd.read_pickle(file)
 
 # df = pd.read_csv('training.1600000.processed.noemoticon.csv',header=0,names=['target','id','date','flag','user','text'])
 # df = df.drop(columns=['id','date','flag','user'])
