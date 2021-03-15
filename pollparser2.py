@@ -102,8 +102,6 @@ def newPollsToDB():
     earliest2021Id = 2137
     c.execute('SELECT pollster,date,con,lab,libdem,green FROM polls WHERE id > ?',(earliest2021Id,))
     existing = dbToDf(c.fetchall())
-    print(existing)
-    print(newPolls)
     complement = newPolls.merge(existing, how = 'outer' ,indicator=True).loc[lambda x : x['_merge']=='left_only']
     complement.drop(['_merge'],axis=1)
     pollsToDB(complement.iloc[::-1])

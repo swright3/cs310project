@@ -108,6 +108,20 @@ def setSentimentTo0():
     conn.commit()
     conn.close()
 
+def formatDate():
+    conn = sqlite3.connect('sortedTweets.db')
+    c = conn.cursor()
+    for party in ['con','lab','libdem','green']:
+        print(party)
+        c.execute('SELECT '+party+'Id,date FROM '+party+'Tweets;')
+        tweets = c.fetchall()
+        for tweet in range(len(tweets)):
+            tweets[tweet] = list(tweets[tweet])
+            tweets[tweet][1] = tweets[tweet][1][:4] + '-' + tweets[tweet][1][5:7] + '-' + tweets[tweet][1][8:10]
+            sql = 'UPDATE '+party+'Tweets SET date = ? WHERE '+party+'Id = ?'
+            c.execute(sql,(tweets[tweet][1],tweets[tweet][0]))
+        conn.commit()
+    conn.close()
 
 def insertTweet(values):
     conn = sqlite3.connect('ukpoliticstweets.db')
@@ -139,6 +153,8 @@ def delete(table,criteria):
     conn.commit()
     conn.close()
 
+if __name__ == '__main__':
+    formatDate()
 #setSentimentTo0()
 #sortedTweets()
 #clearTweets()
