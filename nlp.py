@@ -12,6 +12,57 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import pickle
 import random
 
+def getRawTweets(file):
+    df = pd.read_csv(file,header=0,names=['target','id','date','flag','user','text'])
+    df = df.drop(columns=['id','date','flag','user'])
+    df = df.to_numpy()
+    posTweets = []
+    negTweets = []
+    for tweet in df:
+        if int(tweet[0]) == 0:
+            negTweets.append(tweet[1])
+        else:
+            posTweets.append(tweet[1])
+    return posTweets, negTweets
+
+def getCollectedTweets(file,party):
+    conn = sqlite3.connect(file)
+    c = conn.cursor()
+    c.execute('SELECT '+party+'Id,text,followers FROM '+party+'Tweets WHERE sentiment = ?;',('0',))
+    tweets = c.fetchall()
+    tweets = tweets[:100]
+    for tweet in range(len(tweets)):
+        tweets[tweet] = list(tweets[tweet])
+    return tweets
+
+def cleanTweets(file):
+    posTweets, negTweets = getRawTweets(file)
+    print(':)')
+    with multiprocessing.Pool(processes=4) as pool:
+        cleanPosTweets = pool.map(tweetCleanerP,posTweets)
+        cleanNegTweets = pool.map(tweetCleanerP,negTweets)
+    tweetsToPickle(cleanPosTweets,'cleanPosTweets.pkl')
+    tweetsToPickle(cleanNegTweets,'cleanNegTweets.pkl')
+
+def cleanCollectedTweets(file,party):
+    collectedTweets = getCollectedTweets(file,party)
+    with multiprocessing.Pool(processes=4) as pool:
+        cleanCollectedTweets = pool.map(collectedTweetCleaner,collectedTweets)
+    tweetsToPickle(cleanCollectedTweets,'clean'+party+'Tweets.pkl')
+    return cleanCollectedTweets
+
+def getCleanTweets(file1,file2):
+    cleanPosTweets = tweetsFromPickle(file1)
+    cleanNegTweets = tweetsFromPickle(file2)
+    cleanPosTweets = cleanPosTweets['tweets'].tolist()
+    cleanNegTweets = cleanNegTweets['tweets'].tolist()
+    return cleanPosTweets, cleanNegTweets
+
+def getCleanCollectedTweets(file):
+    cleanCollected = tweetsFromPickle(file)
+    cleanCollected = cleanCollected['tweets'].tolist()
+    return cleanCollected
+
 def tweetsForModel(tweets):
     modelTweets = []
     for tweet in tweets:
@@ -21,6 +72,14 @@ def tweetsForModel(tweets):
         modelTweets.append(modelWords)
     return modelTweets
 
+def collectedTweetsForModel(tweets):
+    for tweet in range(len(tweets)):
+        modelWords = {}
+        for word in tweets[tweet][1]:
+            modelWords[word] = True
+        tweets[tweet][1] = modelWords
+    return tweets
+        
 def labelTweets(modelPosTweets,modelNegTweets):
     posDataset = []
     negDataset = []
@@ -51,35 +110,6 @@ def trainTestModel(traintest):
 def trainModel(dataset):
     classifier = nltk.NaiveBayesClassifier.train(dataset)
     return classifier
-
-def cleanTweets(file):
-    posTweets, negTweets = getRawTweets(file)
-    print(':)')
-    with multiprocessing.Pool(processes=4) as pool:
-        cleanPosTweets = pool.map(tweetCleanerP,posTweets)
-        cleanNegTweets = pool.map(tweetCleanerP,negTweets)
-    tweetsToPickle(cleanPosTweets,'cleanPosTweets.pkl')
-    tweetsToPickle(cleanNegTweets,'cleanNegTweets.pkl')
-
-def getCleanTweets(file1,file2):
-    cleanPosTweets = tweetsFromPickle(file1)
-    cleanNegTweets = tweetsFromPickle(file2)
-    cleanPosTweets = cleanPosTweets['tweets'].tolist()
-    cleanNegTweets = cleanNegTweets['tweets'].tolist()
-    return cleanPosTweets, cleanNegTweets
-
-def getRawTweets(file):
-    df = pd.read_csv(file,header=0,names=['target','id','date','flag','user','text'])
-    df = df.drop(columns=['id','date','flag','user'])
-    df = df.to_numpy()
-    posTweets = []
-    negTweets = []
-    for tweet in df:
-        if int(tweet[0]) == 0:
-            negTweets.append(tweet[1])
-        else:
-            posTweets.append(tweet[1])
-    return posTweets, negTweets
 
 def testNaiveBayes():
     cleanPosTweets, cleanNegTweets = getCleanTweets('cleanPosTweets.pkl','cleanNegTweets.pkl')
@@ -150,6 +180,32 @@ def loadClassifier(file):
         classifier = pickle.load(f)
     return classifier
 
+def analyseCollectedTweets(tweets):
+    classifier = loadClassifier('naiveBayesClassifier.pkl')
+    tweets = collectedTweetsForModel(tweets)
+    for tweet in range(len(tweets)):
+        tweets[tweet].append(classifier.classify(tweets[tweet][1]))
+    return tweets
+
+def updateSentiment(tweets,party,file):
+    conn = sqlite3.connect(file)
+    c = conn.cursor()
+    for tweet in tweets:
+        newSentiment = 0
+        if tweet[3] == 'positive':
+            newSentiment = tweet[2]+1
+        elif tweet[3] == 'negative':
+            newSentiment = tweet[2]*(-1)-1
+        c.execute('UPDATE '+party+'Tweets SET sentiment = ? WHERE '+party+'Id = ?;',(newSentiment,tweet[0]))
+    conn.commit()
+    conn.close()
+
+def collectedTweetProcessor(party,file):
+    tweets = cleanCollectedTweets(file,party)
+    tweets = collectedTweetsForModel(tweets)
+    tweets = analyseCollectedTweets(tweets)
+    updateSentiment(tweets,party,file)
+
     # posResults = []
     # for tweet in posTweets[:10000]:
     #     posResults.append(sia.polarity_scores(tweet)['compound'])
@@ -165,5 +221,8 @@ def loadClassifier(file):
 
 
 if __name__ == '__main__':
-    classifier = trainNaiveBayes()
-    saveClassifier(classifier,'naiveBayesClassifier.pkl')
+    collectedTweetProcessor('con','sortedTweets.db')
+    # classifier = trainNaiveBayes()
+    # saveClassifier(classifier,'naiveBayesClassifier.pkl')
+    # cleanPosTweets, cleanNegTweets = getCleanTweets('cleanPosTweets.pkl','cleanNegTweets.pkl')
+    # print(cleanPosTweets[:10])

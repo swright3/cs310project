@@ -98,6 +98,17 @@ def sortedTweets():
     conn.commit()
     conn.close()
 
+def setSentimentTo0():
+    conn = sqlite3.connect('sortedTweets.db')
+    c = conn.cursor()
+    c.execute('UPDATE conTweets SET sentiment = ?;',('0',))
+    c.execute('UPDATE labTweets SET sentiment = ?;',('0',))
+    c.execute('UPDATE libdemTweets SET sentiment = ?;',('0',))
+    c.execute('UPDATE greenTweets SET sentiment = ?;',('0',))
+    conn.commit()
+    conn.close()
+
+
 def insertTweet(values):
     conn = sqlite3.connect('ukpoliticstweets.db')
     c = conn.cursor()
@@ -128,6 +139,7 @@ def delete(table,criteria):
     conn.commit()
     conn.close()
 
+#setSentimentTo0()
 #sortedTweets()
 #clearTweets()
 #tweet = (101,"sam","despite all the negative press covfefe","#gymladboris","right here","right now",2000,1999,1998,0)

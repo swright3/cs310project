@@ -92,6 +92,14 @@ def lemmatizeP(normalizedTweet):
         lemmatizedWords.append(lemmatizer.lemmatize(word, pos))
     return lemmatizedWords
 
+def collectedTweetCleaner(tweet):
+    wn.ensure_loaded()
+    tweet[1] = tokenizeP(tweet[1])
+    tweet[1] = normalizeP(tweet[1])
+    tweet[1] = lemmatizeP(tweet[1])
+    tweet[1] = cleanP(tweet[1])
+    return tweet
+
 def removeStopwords(tweet):
     result = []
     for word in tweet:

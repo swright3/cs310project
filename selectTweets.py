@@ -50,7 +50,8 @@ def partySearch(party,c,conn):
     existing = c2.fetchall()
     for tweet in relevant:
         if tweet[1] not in existing:
-            c2.execute('INSERT INTO ' + party + 'Tweets (id,user,text,hashtags,location,coordinates,date,followers,retweets,favourites,replyToId) VALUES (?,?,?,?,?,?,?,?,?,?,?);',tweet[1:-1])
+            tweet[-1] = '0'
+            c2.execute('INSERT INTO ' + party + 'Tweets (id,user,text,hashtags,location,coordinates,date,followers,retweets,favourites,replyToId) VALUES (?,?,?,?,?,?,?,?,?,?,?);',tweet[1:])
     conn2.commit()
     conn2.close()
 
@@ -65,4 +66,5 @@ def formatPhrases(phrases):
         formatted += (phrase + ' OR ')
     return formatted[:-4]
 
-sortTweets()
+if __name__ == '__main__':
+    sortTweets()
