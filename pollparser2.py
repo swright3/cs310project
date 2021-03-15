@@ -88,15 +88,32 @@ def newPollsToDF(index):
     return df
 
 def pollsToDB(polls):
-    conn = sqlite3.connect('polls.db')
+    conn = sqlite3.connect('sortedTweets.db')
     c = conn.cursor()
     for index, row in polls.iterrows():
         c.execute('INSERT INTO polls (pollster,date,con,lab,libdem,green) VALUES (?,?,?,?,?,?);',(row['pollster'],row['date'],row['con'],row['lab'],row['libdem'],row['green']))
     conn.commit()
     conn.close()
 
-def makePollTable():
-    conn = sqlite3.connect('polls.db')
+def newPollsToDB():
+    newPolls = newPollsToDF(0)
+    conn = sqlite3.connect('sortedTweets.db')
+    c = conn.cursor()
+    earliest2021Id = 2137
+    c.execute('SELECT pollster,date,con,lab,libdem,green FROM polls WHERE id > ?',(earliest2021Id,))
+    existing = dbToDf(c.fetchall())
+    print(existing)
+    print(newPolls)
+    complement = newPolls.merge(existing, how = 'outer' ,indicator=True).loc[lambda x : x['_merge']=='left_only']
+    complement.drop(['_merge'],axis=1)
+    pollsToDB(complement.iloc[::-1])
+
+def dbToDf(polls):
+    df = pd.DataFrame(polls,columns=['pollster','date','con','lab','libdem','green'])
+    return df   
+
+def makePollTable(file):
+    conn = sqlite3.connect(file)
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS polls (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -115,10 +132,11 @@ def makePollTable():
     conn.close()
 
 if __name__ == '__main__':
-    pollsPre2020 = pre2020PollsToDF()
-    polls2020 = newPollsToDF(1)
-    polls2021 = newPollsToDF(0)
-    pre2021Polls = polls2020.append(pollsPre2020)
-    allPolls = polls2021.append(pre2021Polls)
-    makePollTable()
-    pollsToDB(allPolls.iloc[::-1])
+    # pollsPre2020 = pre2020PollsToDF()
+    # polls2020 = newPollsToDF(1)
+    # polls2021 = newPollsToDF(0)
+    # pre2021Polls = polls2020.append(pollsPre2020)
+    # allPolls = polls2021.append(pre2021Polls)
+    # makePollTable()
+    # pollsToDB(allPolls.iloc[::-1])
+    newPollsToDB()

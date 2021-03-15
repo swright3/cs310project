@@ -28,9 +28,8 @@ def getRawTweets(file):
 def getCollectedTweets(file,party):
     conn = sqlite3.connect(file)
     c = conn.cursor()
-    c.execute('SELECT '+party+'Id,text,followers FROM '+party+'Tweets WHERE sentiment = ?;',('0',))
+    c.execute('SELECT '+party+'Id,text,followers FROM '+party+'Tweets;')# WHERE sentiment = ?;',('0',))
     tweets = c.fetchall()
-    tweets = tweets[:100]
     for tweet in range(len(tweets)):
         tweets[tweet] = list(tweets[tweet])
     return tweets
@@ -193,9 +192,9 @@ def updateSentiment(tweets,party,file):
     for tweet in tweets:
         newSentiment = 0
         if tweet[3] == 'positive':
-            newSentiment = tweet[2]+1
+            newSentiment = '1'
         elif tweet[3] == 'negative':
-            newSentiment = tweet[2]*(-1)-1
+            newSentiment = '-1'
         c.execute('UPDATE '+party+'Tweets SET sentiment = ? WHERE '+party+'Id = ?;',(newSentiment,tweet[0]))
     conn.commit()
     conn.close()
@@ -222,6 +221,13 @@ def collectedTweetProcessor(party,file):
 
 if __name__ == '__main__':
     collectedTweetProcessor('con','sortedTweets.db')
+    print('con')
+    collectedTweetProcessor('lab','sortedTweets.db')
+    print('lab')
+    collectedTweetProcessor('libdem','sortedTweets.db')
+    print('libdem')
+    collectedTweetProcessor('green','sortedTweets.db')
+    print('green')
     # classifier = trainNaiveBayes()
     # saveClassifier(classifier,'naiveBayesClassifier.pkl')
     # cleanPosTweets, cleanNegTweets = getCleanTweets('cleanPosTweets.pkl','cleanNegTweets.pkl')
