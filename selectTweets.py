@@ -6,15 +6,56 @@ def getDB1Tweets():
     c.execute('SELECT * FROM tweets;')
     return c.fetchall()
 
+def getOldIds():
+    conn = sqlite3.connect('sortedTweets.db')
+    c = conn.cursor()
+    oldIds = set()
+    c.execute('SELECT id FROM conTweets')
+    ids = c.fetchall()
+    for id in ids:
+        oldIds.add(id[0])
+    c.execute('SELECT id FROM labTweets')
+    ids = c.fetchall()
+    for id in ids:
+        oldIds.add(id[0])
+    c.execute('SELECT id FROM libdemTweets')
+    ids = c.fetchall()
+    for id in ids:
+        oldIds.add(id[0])
+    c.execute('SELECT id FROM greenTweets')
+    ids = c.fetchall()
+    for id in ids:
+        oldIds.add(id[0])
+    conn.close()
+    return list(oldIds)
+
+def getLargestExistingId():
+    conn = sqlite3.connect('sortedTweets.db')
+    c = conn.cursor()
+    maxIds = []
+    c.execute('SELECT MAX(id) FROM conTweets;')
+    maxIds.append(c.fetchone()[0])
+    c.execute('SELECT MAX(id) FROM labTweets;')
+    maxIds.append(c.fetchone()[0])
+    c.execute('SELECT MAX(id) FROM libdemTweets;')
+    maxIds.append(c.fetchone()[0])
+    c.execute('SELECT MAX(id) FROM greenTweets;')
+    maxIds.append(c.fetchone()[0])
+    conn.close()
+    print(maxIds)
+    print(type(maxIds))
+    return max(maxIds)
+
 def sortTweets():
+    maxId = getLargestExistingId()
     conn = sqlite3.connect('ukpoliticstweets.db')
     c = conn.cursor()
-    c.execute('SELECT * FROM tweets;')
+    c.execute('SELECT * FROM tweets WHERE id > ?;',(maxId,))
     tweets = c.fetchall()
     conn.close()
     conn = sqlite3.connect('ukpoliticstweets2.db')
     c = conn.cursor()
-    c.execute('SELECT * FROM tweets;')
+    c.execute('SELECT * FROM tweets WHERE id > ?;',(maxId,))
     tweets += c.fetchall()
     for tweet in tweets:
         tweet = list(tweet)
@@ -28,9 +69,13 @@ def sortTweets():
     c.execute('DELETE FROM vTweets;')
     c.executemany('INSERT INTO vTweets (newId,id,user,text,hashtags,location,coordinates,date,followers,retweets,favourites,replyToId,party) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);',local)
     partySearch('con',c,conn)
+    print('con')
     partySearch('lab',c,conn)
+    print('lab')
     partySearch('libdem',c,conn)
+    print('libdem')
     partySearch('green',c,conn)
+    print('green')
     conn.commit()
     conn.close()
 
@@ -46,12 +91,12 @@ def partySearch(party,c,conn):
     relevant = c.fetchall()
     conn2 = sqlite3.connect('sortedTweets.db')
     c2 = conn2.cursor()
-    c2.execute('SELECT id FROM ' + party + 'Tweets;')
-    existing = c2.fetchall()
+    # c2.execute('SELECT id FROM ' + party + 'Tweets;')
+    # existing = c2.fetchall()
     for tweet in relevant:
-        if tweet[1] not in existing:
-            tweet[-1] = '0'
-            c2.execute('INSERT INTO ' + party + 'Tweets (id,user,text,hashtags,location,coordinates,date,followers,retweets,favourites,replyToId) VALUES (?,?,?,?,?,?,?,?,?,?,?);',tweet[1:])
+        tweet = list(tweet)
+        tweet[-1] = '0'
+        c2.execute('INSERT INTO ' + party + 'Tweets (id,user,text,hashtags,location,coordinates,date,followers,retweets,favourites,replyToId,sentiment) VALUES (?,?,?,?,?,?,?,?,?,?,?,?);',tweet[1:])
     conn2.commit()
     conn2.close()
 
