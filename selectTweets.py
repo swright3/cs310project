@@ -42,8 +42,6 @@ def getLargestExistingId():
     c.execute('SELECT MAX(id) FROM greenTweets;')
     maxIds.append(c.fetchone()[0])
     conn.close()
-    print(maxIds)
-    print(type(maxIds))
     return max(maxIds)
 
 def sortTweets():
