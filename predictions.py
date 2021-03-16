@@ -2,6 +2,8 @@ import sqlite3
 import sklearn
 from sklearn.linear_model import LinearRegression
 import numpy as np
+import datetime
+from relateTweetsToPolls import getPollRelevantTweets
 
 def getPercentageAndSentiment(pollId,party,conn,c):
     sql = 'SELECT '+party+'Tweets.sentiment,polls.'+party+' FROM polls INNER JOIN '+party+'PollTweets ON '+party+'PollTweets.pollId = polls.id INNER JOIN '+party+'Tweets ON '+party+'Tweets.'+party+'Id = '+party+'PollTweets.partyId WHERE polls.id = ?;'
@@ -44,8 +46,30 @@ def trainModel(data):
     model = LinearRegression().fit(x,y)
     r_sq = model.score(x, y)
     print(r_sq)
+    return model
+
+def predictPercentage(model,party,date):
+    conn = sqlite3.connect('sortedTweets.db')
+    c = conn.cursor()
+    tweets = getPollRelevantTweets(date,conn,c,party)
+    sentiments = []
+    for tweet in tweets:
+        c.execute('SELECT sentiment FROM '+party+'Tweets WHERE '+party+'Id = ?;',(tweet,))
+        sentiments.append(c.fetchone())
+    totalSentiment = calculateTotalSentiment(sentiments)
+    x = np.array([[totalSentiment]])
+    print(model.predict(x))
 
 if __name__ == '__main__':
     data = collectData('con')
-    print(data)
-    trainModel(data)
+    model = trainModel(data)
+    predictPercentage(model,'con','2021-03-13')
+    data = collectData('lab')
+    model = trainModel(data)
+    predictPercentage(model,'lab','2021-03-13')
+    data = collectData('libdem')
+    model = trainModel(data)
+    predictPercentage(model,'libdem','2021-03-13')
+    data = collectData('green')
+    model = trainModel(data)
+    predictPercentage(model,'green','2021-03-13')
