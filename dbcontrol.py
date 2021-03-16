@@ -1,5 +1,4 @@
 import sqlite3
-from selectTweets import getLargestExistingId
 
 def clearTweets():
     conn = sqlite3.connect('ukpoliticstweets.db')
@@ -161,6 +160,21 @@ def deleteOldTweets(file):
     c.execute('DELETE FROM tweets WHERE id < ?;',(stopAtId,))
     conn.commit()
     conn.close()
+
+def getLargestExistingId():
+    conn = sqlite3.connect('sortedTweets.db')
+    c = conn.cursor()
+    maxIds = []
+    c.execute('SELECT MAX(id) FROM conTweets;')
+    maxIds.append(c.fetchone()[0])
+    c.execute('SELECT MAX(id) FROM labTweets;')
+    maxIds.append(c.fetchone()[0])
+    c.execute('SELECT MAX(id) FROM libdemTweets;')
+    maxIds.append(c.fetchone()[0])
+    c.execute('SELECT MAX(id) FROM greenTweets;')
+    maxIds.append(c.fetchone()[0])
+    conn.close()
+    return max(maxIds)
 
 if __name__ == '__main__':
     deleteOldTweets('ukpoliticstweets.db')
