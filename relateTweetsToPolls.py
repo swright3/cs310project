@@ -49,13 +49,21 @@ def createRelationalTables():
     conn.close()
 
 #earliest tweet = 2021-03-01
-#earliest usable poll = 2021-3-4 id = 2304
+#earliest usable poll = 2021-3-4 id = 2305
 
 def fillRelationalTable(party):
     conn = sqlite3.connect('sortedTweets.db')
     c = conn.cursor()
     c.execute('SELECT id,date FROM polls WHERE id > ?;',(2304,))
-    polls = c.fetchall()
+    allPolls = c.fetchall()
+    c.execute('SELECT DISTINCT pollId FROM '+party+'PollTweets;')
+    existingPolls = c.fetchall()
+    for poll in range(len(existingPolls)):
+        existingPolls[poll] = existingPolls[poll][0]
+    polls = []
+    for poll in allPolls:
+        if poll not in existingPolls:
+            polls.append(poll)
     for poll in polls:
         tweetIds = getPollRelevantTweets(poll[1],conn,c,party)
         for id in tweetIds:
@@ -82,8 +90,7 @@ def getPollRelevantTweets(date,conn,c,party):
     
 
 if __name__ == '__main__':
-    print()
-    # fillRelationalTable('con')
-    # fillRelationalTable('lab')
-    # fillRelationalTable('libdem')
-    # fillRelationalTable('green')
+    fillRelationalTable('con')
+    fillRelationalTable('lab')
+    fillRelationalTable('libdem')
+    fillRelationalTable('green')

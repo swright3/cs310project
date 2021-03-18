@@ -21,6 +21,22 @@ def calculateTotalSentiment(sentAndPercent):
             neg += 1
     return ((pos-neg)/(pos+neg))*100
 
+def getPercentageAndSentimentScaledByFollowers(pollId,party,conn,c):
+    sql = 'SELECT '+party+'Tweets.sentiment,polls.'+party+','+party+'Tweets.followers FROM polls INNER JOIN '+party+'PollTweets ON '+party+'PollTweets.pollId = polls.id INNER JOIN '+party+'Tweets ON '+party+'Tweets.'+party+'Id = '+party+'PollTweets.partyId WHERE polls.id = ?;'
+    c.execute(sql,(pollId,))
+    sentAndPercent = c.fetchall()
+    return sentAndPercent
+
+def calculateTotalSentimentScaledByFollowers(sentAndPercent):
+    pos = 0
+    neg = 0
+    for data in sentAndPercent:
+        if data[0] == '1':
+            pos += int(data[0])*data[2]
+        elif data[0] == '-1':
+            neg += int(data[0])*data[2]*-1
+    return ((pos-neg)/(pos+neg))*100
+
 def collectData(party):
     conn = sqlite3.connect('sortedTweets.db')
     c = conn.cursor()
@@ -30,6 +46,19 @@ def collectData(party):
     for id in pollIds:
         sentAndPercent = getPercentageAndSentiment(id[0],party,conn,c)
         totalSentiment = calculateTotalSentiment(sentAndPercent)
+        results.append([totalSentiment,sentAndPercent[0][1]])
+    conn.close()
+    return results
+
+def collectDataScaledByFollowers(party):
+    conn = sqlite3.connect('sortedTweets.db')
+    c = conn.cursor()
+    c.execute('SELECT DISTINCT pollId from '+party+'PollTweets')
+    pollIds = c.fetchall()
+    results = []
+    for id in pollIds:
+        sentAndPercent = getPercentageAndSentimentScaledByFollowers(id[0],party,conn,c)
+        totalSentiment = calculateTotalSentimentScaledByFollowers(sentAndPercent)
         results.append([totalSentiment,sentAndPercent[0][1]])
     conn.close()
     return results
@@ -45,31 +74,48 @@ def trainModel(data):
     x = x.reshape((-1, 1))
     model = LinearRegression().fit(x,y)
     r_sq = model.score(x, y)
-    print(r_sq)
-    return model
+    modelMetrics = []
+    modelMetrics.append(r_sq)
+    modelMetrics.append(model.intercept_)
+    modelMetrics.append(model.coef_[0])
+    return model, modelMetrics
 
-def predictPercentage(model,party,date):
+def predictPercentage(party,dates):
+    data = collectData(party)
+    model, modelMetrics = trainModel(data)
     conn = sqlite3.connect('sortedTweets.db')
     c = conn.cursor()
-    tweets = getPollRelevantTweets(date,conn,c,party)
-    sentiments = []
-    for tweet in tweets:
-        c.execute('SELECT sentiment FROM '+party+'Tweets WHERE '+party+'Id = ?;',(tweet,))
-        sentiments.append(c.fetchone())
-    totalSentiment = calculateTotalSentiment(sentiments)
-    x = np.array([[totalSentiment]])
-    print(model.predict(x))
+    predictions = []
+    for date in dates:
+        tweets = getPollRelevantTweets(date,conn,c,party)
+        sentiments = []
+        for tweet in tweets:
+            c.execute('SELECT sentiment FROM '+party+'Tweets WHERE '+party+'Id = ?;',(tweet,))
+            sentiments.append(c.fetchone())
+        totalSentiment = calculateTotalSentiment(sentiments)
+        x = np.array([[totalSentiment]])
+        predictions.append(model.predict(x))
+    return predictions, modelMetrics
+
+def predictPercentageScaledByFollowers(party,dates):
+    data = collectDataScaledByFollowers(party)
+    model, modelMetrics = trainModel(data)
+    conn = sqlite3.connect('sortedTweets.db')
+    c = conn.cursor()
+    predictions = []
+    for date in dates:
+        tweets = getPollRelevantTweets(date,conn,c,party)
+        sentiments = []
+        for tweet in tweets:
+            c.execute('SELECT sentiment,date,followers FROM '+party+'Tweets WHERE '+party+'Id = ?;',(tweet,))
+            sentiments.append(c.fetchone())
+        totalSentiment = calculateTotalSentimentScaledByFollowers(sentiments)
+        x = np.array([[totalSentiment]])
+        predictions.append(model.predict(x))
+    return predictions, modelMetrics
+
+def predictPercentageFromPastPolls():
+    print()
 
 if __name__ == '__main__':
-    data = collectData('con')
-    model = trainModel(data)
-    predictPercentage(model,'con','2021-03-13')
-    data = collectData('lab')
-    model = trainModel(data)
-    predictPercentage(model,'lab','2021-03-13')
-    data = collectData('libdem')
-    model = trainModel(data)
-    predictPercentage(model,'libdem','2021-03-13')
-    data = collectData('green')
-    model = trainModel(data)
-    predictPercentage(model,'green','2021-03-13')
+    predictPercentage('con','2021-03-14')

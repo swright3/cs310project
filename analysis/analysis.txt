@@ -1,0 +1,55 @@
+Model Accuracy Metrics, Conservative Linear Regression
+R Squared: 0.19694655785413806
+Y Intercept: 41.935861719529356
+Gradient of slope: 0.2835592280798959
+Root Mean Squared Error: 1.0118487366876894
+Mean Absolute Error: 0.9264995403444202
+
+Model Accuracy Metrics, Conservative Scaled Linear Regression
+R Squared: 0.27564237098884536
+Y Intercept: 39.1614122243064
+Gradient of slope: 0.20759638618838142
+Root Mean Squared Error: 1.7591778545795174
+Mean Absolute Error: 1.2822323826132194
+
+Model Accuracy Metrics, Labour Linear Regression
+R Squared: 0.19164896301842604
+Y Intercept: 34.415930995026876
+Gradient of slope: -0.2267449422442856
+Root Mean Squared Error: 1.8547961257980718
+Mean Absolute Error: 1.5415008070730931
+
+Model Accuracy Metrics, Labour Scaled Linear Regression
+R Squared: 0.04810132052545324
+Y Intercept: 35.645230397470925
+Gradient of slope: -0.10605501836248027
+Root Mean Squared Error: 1.9587888713574553
+Mean Absolute Error: 1.6065700297531171
+
+Model Accuracy Metrics, Lib Dem Linear Regression
+R Squared: 0.38048048771339327
+Y Intercept: 7.433669786775712
+Gradient of slope: -0.04567503990454573
+Root Mean Squared Error: 0.9399779498437973
+Mean Absolute Error: 0.7183828683747888
+
+Model Accuracy Metrics, Lib Dem Scaled Linear Regression
+R Squared: 0.0891909310124992
+Y Intercept: 7.2369926534863165
+Gradient of slope: -0.016389728936694017
+Root Mean Squared Error: 1.0451911839678831
+Mean Absolute Error: 0.8428420476503204
+
+Model Accuracy Metrics, Greens Linear Regression
+R Squared: 0.05674927581025835
+Y Intercept: -2.7562813819861063
+Gradient of slope: 0.15927905240794007
+Root Mean Squared Error: 0.9986502866790784
+Mean Absolute Error: 0.8241302274496258
+
+Model Accuracy Metrics, Greens Scaled Linear Regression
+R Squared: 0.11842948784006846
+Y Intercept: 3.4584342851647465
+Gradient of slope: 0.06363865020037446
+Root Mean Squared Error: 0.9389394850016045
+Mean Absolute Error: 0.6491701655988329

@@ -108,7 +108,7 @@ def setSentimentTo0():
     conn.commit()
     conn.close()
 
-def formatDate():
+def formatTweetDate():
     conn = sqlite3.connect('sortedTweets.db')
     c = conn.cursor()
     for party in ['con','lab','libdem','green']:
@@ -122,6 +122,17 @@ def formatDate():
             c.execute(sql,(tweets[tweet][1],tweets[tweet][0]))
         conn.commit()
     conn.close()
+
+def formatPollDate():
+    conn = sqlite3.connect('sortedTweets.db')            #there were some poll dates that start with a space
+    c = conn.cursor()
+    c.execute('SELECT id,date FROM polls WHERE date LIKE ?;',(' %',))
+    polls = c.fetchall()
+    for poll in polls:
+        c.execute('UPDATE polls SET date = ? WHERE id = ?;',(poll[1][1:],poll[0]))
+    conn.commit()
+    conn.close()
+
 
 def insertTweet(values):
     conn = sqlite3.connect('ukpoliticstweets.db')
@@ -177,8 +188,9 @@ def getLargestExistingId():
     return max(maxIds)
 
 if __name__ == '__main__':
-    deleteOldTweets('ukpoliticstweets.db')
-    deleteOldTweets('ukpoliticstweets2.db')
+    formatPollDate()
+    #deleteOldTweets('ukpoliticstweets.db')
+    #deleteOldTweets('ukpoliticstweets2.db')
     #formatDate()
 #setSentimentTo0()
 #sortedTweets()

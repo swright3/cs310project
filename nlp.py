@@ -12,7 +12,7 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import pickle
 import random
 
-def getRawTweets(file):
+def getRawTweets(file):                              #used for sample tweets
     df = pd.read_csv(file,header=0,names=['target','id','date','flag','user','text'])
     df = df.drop(columns=['id','date','flag','user'])
     df = df.to_numpy()
@@ -25,16 +25,16 @@ def getRawTweets(file):
             posTweets.append(tweet[1])
     return posTweets, negTweets
 
-def getCollectedTweets(file,party):
+def getCollectedTweets(file,party):    #gets new tweets where sentiment = 0
     conn = sqlite3.connect(file)
     c = conn.cursor()
-    c.execute('SELECT '+party+'Id,text,followers FROM '+party+'Tweets;')# WHERE sentiment = ?;',('0',))
+    c.execute('SELECT '+party+'Id,text,followers FROM '+party+'Tweets WHERE sentiment = ?;',('0',))
     tweets = c.fetchall()
     for tweet in range(len(tweets)):
         tweets[tweet] = list(tweets[tweet])
     return tweets
 
-def cleanTweets(file):
+def cleanTweets(file):                                    #used for sample tweets
     posTweets, negTweets = getRawTweets(file)
     print(':)')
     with multiprocessing.Pool(processes=4) as pool:
@@ -44,25 +44,25 @@ def cleanTweets(file):
     tweetsToPickle(cleanNegTweets,'cleanNegTweets.pkl')
 
 def cleanCollectedTweets(file,party):
-    collectedTweets = getCollectedTweets(file,party)
-    with multiprocessing.Pool(processes=4) as pool:
-        cleanCollectedTweets = pool.map(collectedTweetCleaner,collectedTweets)
-    tweetsToPickle(cleanCollectedTweets,'clean'+party+'Tweets.pkl')
+    collectedTweets = getCollectedTweets(file,party)                            #gets new tweets with sentiment = 0
+    with multiprocessing.Pool(processes=4) as pool:                             #uses multiprocessing to clean them
+        cleanCollectedTweets = pool.map(collectedTweetCleaner,collectedTweets)  #collectedTweetCleaner imported from tweetCleaner.py
+    #tweetsToPickle(cleanCollectedTweets,'clean'+party+'Tweets.pkl')            #returns to collectedTweetProcessor  
     return cleanCollectedTweets
 
-def getCleanTweets(file1,file2):
+def getCleanTweets(file1,file2):                        #used for sample tweets
     cleanPosTweets = tweetsFromPickle(file1)
     cleanNegTweets = tweetsFromPickle(file2)
     cleanPosTweets = cleanPosTweets['tweets'].tolist()
     cleanNegTweets = cleanNegTweets['tweets'].tolist()
     return cleanPosTweets, cleanNegTweets
 
-def getCleanCollectedTweets(file):
+def getCleanCollectedTweets(file):                       #not used
     cleanCollected = tweetsFromPickle(file)
     cleanCollected = cleanCollected['tweets'].tolist()
     return cleanCollected
 
-def tweetsForModel(tweets):
+def tweetsForModel(tweets):                             #used for sample tweets
     modelTweets = []
     for tweet in tweets:
         modelWords = {}
@@ -200,10 +200,10 @@ def updateSentiment(tweets,party,file):
     conn.close()
 
 def collectedTweetProcessor(party,file):
-    tweets = cleanCollectedTweets(file,party)
-    tweets = collectedTweetsForModel(tweets)
-    tweets = analyseCollectedTweets(tweets)
-    updateSentiment(tweets,party,file)
+    tweets = cleanCollectedTweets(file,party) #gets tweets with no sentiment and cleans them
+    tweets = collectedTweetsForModel(tweets)  #formats tweets for model input
+    tweets = analyseCollectedTweets(tweets)   #uses classifier to classify tweets
+    updateSentiment(tweets,party,file)        #updates the sentiment in sortedTweets.db
 
     # posResults = []
     # for tweet in posTweets[:10000]:
