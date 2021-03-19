@@ -23,10 +23,6 @@ def connect_to_twitter_OAuth():
 # Create API object
 api = connect_to_twitter_OAuth()
 
-# meme_tweets = api.user_timeline('LinusTechTip_')
-# for tweet in meme_tweets:
-#     print(tweet.text)
-
 class StreamListener(tweepy.StreamListener):
     #Inherit from tweepy streamlistener and override methods because they are stubs
     def on_status(self, status):

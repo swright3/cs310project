@@ -3,15 +3,20 @@ import requests
 import pandas as pd
 import numpy as np
 
+#THIS FILE IS NOT USED BECAUSE I SWITCHED TO USING MP TWITTER HANDLES FROM A CSV
+
+#Extracts the html of the mp wiki page
 def getHTML(link):
     source = requests.get(link).text
     soup = BeautifulSoup(source,'lxml')
     return soup
 
+#Extracts the table from the html
 def getTable(soup):
     table = soup.find('table', class_='wikitable sortable')
     return table
 
+#Extracts the name of the mp from each row of the table
 def getMPs(table):
     rows = table.find_all('tr')
     rows.pop(0)
@@ -31,6 +36,7 @@ def getMPs(table):
     #print(mps)
     return mps
 
+#main function
 def getMParray():
     source = getHTML("https://en.wikipedia.org/wiki/List_of_MPs_elected_in_the_2019_United_Kingdom_general_election")
     table = getTable(source)

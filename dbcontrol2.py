@@ -1,5 +1,7 @@
 import sqlite3
 
+#This file is only still here temporarily until I implement proper multiprocessing for the collection of tweets
+
 def clearTweets():
     conn = sqlite3.connect('ukpoliticstweets2.db')
     c = conn.cursor()

@@ -2,18 +2,7 @@ import sqlite3
 from pollparser2 import makePollTable
 from datetime import datetime, timedelta
 
-def transferPolls():
-    conn = sqlite3.connect('polls.db')
-    c = conn.cursor()
-    c.execute('SELECT pollster,date,con,lab,libdem,green FROM polls')
-    polls = c.fetchall()
-    conn.close()
-    conn = sqlite3.connect('sortedTweets.db')
-    c = conn.cursor()
-    c.executemany('INSERT INTO polls (pollster,date,con,lab,libdem,green) VALUES (?,?,?,?,?,?);',polls)
-    conn.commit()
-    conn.close()
-
+#Creates the relational tables between the polls and each party's tweet table
 def createRelationalTables():
     conn = sqlite3.connect('sortedTweets.db')
     c = conn.cursor()
@@ -51,6 +40,7 @@ def createRelationalTables():
 #earliest tweet = 2021-03-01
 #earliest usable poll = 2021-3-4 id = 2305
 
+#Gets all new polls and relates tweets to them
 def fillRelationalTable(party):
     conn = sqlite3.connect('sortedTweets.db')
     c = conn.cursor()
@@ -71,6 +61,7 @@ def fillRelationalTable(party):
         conn.commit()
     conn.close()
 
+#Selects only the ids of the tweets from up to 3 days before the specified poll
 def getPollRelevantTweets(date,conn,c,party):
     dates = []
     date1 = datetime.strptime(date, '%Y-%m-%d')

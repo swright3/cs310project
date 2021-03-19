@@ -1,11 +1,6 @@
 from dbcontrol import *
 
-def getDB1Tweets():
-    conn = sqlite3.connect('ukpoliticstweets.db')
-    c = conn.cursor()
-    c.execute('SELECT * FROM tweets;')
-    return c.fetchall()
-
+#Selects all of the tweet ids from the sorted tweet database
 def getOldIds():
     conn = sqlite3.connect('sortedTweets.db')
     c = conn.cursor()
@@ -29,21 +24,7 @@ def getOldIds():
     conn.close()
     return list(oldIds)
 
-def getLargestExistingId():
-    conn = sqlite3.connect('sortedTweets.db')
-    c = conn.cursor()
-    maxIds = []
-    c.execute('SELECT MAX(id) FROM conTweets;')
-    maxIds.append(c.fetchone()[0])
-    c.execute('SELECT MAX(id) FROM labTweets;')
-    maxIds.append(c.fetchone()[0])
-    c.execute('SELECT MAX(id) FROM libdemTweets;')
-    maxIds.append(c.fetchone()[0])
-    c.execute('SELECT MAX(id) FROM greenTweets;')
-    maxIds.append(c.fetchone()[0])
-    conn.close()
-    return max(maxIds)
-
+#Selects all of the tweets that haven't been sorted and loads them into a virtual table in memory so the full text search is faster
 def sortTweets():
     maxId = getLargestExistingId()
     conn = sqlite3.connect('ukpoliticstweets.db')
@@ -67,22 +48,25 @@ def sortTweets():
     c.execute('DELETE FROM vTweets;')
     c.executemany('INSERT INTO vTweets (newId,id,user,text,hashtags,location,coordinates,date,followers,retweets,favourites,replyToId,party) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?);',local)
     partySearch('con',c,conn)
-    print('con')
+    #print('con')
     partySearch('lab',c,conn)
-    print('lab')
+    #print('lab')
     partySearch('libdem',c,conn)
-    print('libdem')
+    #print('libdem')
     partySearch('green',c,conn)
-    print('green')
+    #print('green')
     conn.commit()
     conn.close()
 
+#Discards all of the tweets from user that are known to be outside of the UK
 def placeSearch(c,conn):
     with open('formattedPlaces.txt','r') as f:
         places = f.read()
     c.execute('SELECT * FROM vTweets WHERE location MATCH ?;',(places,))
     return c.fetchall()
 
+#Given a party, this function performs a full text search on all of the new tweets with the party's associated phrases
+#Inserts only the tweets relevant to the specified party into its table in sortedTweets.db
 def partySearch(party,c,conn):
     phrases = formatPhrases(getPhrases(party))
     c.execute('SELECT * FROM vTweets WHERE text MATCH ?;',(phrases,))
@@ -91,6 +75,8 @@ def partySearch(party,c,conn):
     c2 = conn2.cursor()
     # c2.execute('SELECT id FROM ' + party + 'Tweets;')
     # existing = c2.fetchall()
+    print(party + ' tweet examples:')
+    print(relevant[:5])
     for tweet in relevant:
         tweet = list(tweet)
         tweet[-1] = '0'
@@ -98,11 +84,13 @@ def partySearch(party,c,conn):
     conn2.commit()
     conn2.close()
 
+#Gets the specified party's associated phrases from a text file
 def getPhrases(party):
     with open(party + 'Phrases.txt','r') as f:
         phrases1 = f.read().split(',')
     return phrases1[:-1]
 
+#Formats the phrases for a full text search
 def formatPhrases(phrases):
     formatted = ''
     for phrase in phrases:

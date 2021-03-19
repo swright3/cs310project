@@ -1,5 +1,6 @@
 import sqlite3
 
+#Clears and creates the main table for newly collected tweets
 def clearTweets():
     conn = sqlite3.connect('ukpoliticstweets.db')
     c = conn.cursor()
@@ -24,6 +25,7 @@ def clearTweets():
     conn.commit()
     conn.close()
 
+#Clears and creates each of the party specific tables that tweets are sorted into
 def sortedTweets():
     conn = sqlite3.connect('sortedTweets.db')
     c = conn.cursor()
@@ -98,6 +100,7 @@ def sortedTweets():
     conn.commit()
     conn.close()
 
+#Originally didn't set the default sentiment for tweets so this sets all sentiments to '0'
 def setSentimentTo0():
     conn = sqlite3.connect('sortedTweets.db')
     c = conn.cursor()
@@ -108,6 +111,7 @@ def setSentimentTo0():
     conn.commit()
     conn.close()
 
+#Formats the date of each tweet in each party's table to YYYY-MM-DD
 def formatTweetDate():
     conn = sqlite3.connect('sortedTweets.db')
     c = conn.cursor()
@@ -123,8 +127,9 @@ def formatTweetDate():
         conn.commit()
     conn.close()
 
+#There were some poll dates that start with a space, this removes the space
 def formatPollDate():
-    conn = sqlite3.connect('sortedTweets.db')            #there were some poll dates that start with a space
+    conn = sqlite3.connect('sortedTweets.db')            
     c = conn.cursor()
     c.execute('SELECT id,date FROM polls WHERE date LIKE ?;',(' %',))
     polls = c.fetchall()
@@ -133,7 +138,7 @@ def formatPollDate():
     conn.commit()
     conn.close()
 
-
+#Inserts newly collected tweets into the unsorted database
 def insertTweet(values):
     conn = sqlite3.connect('ukpoliticstweets.db')
     c = conn.cursor()
@@ -142,36 +147,17 @@ def insertTweet(values):
     conn.commit()
     conn.close()
 
-""" def select(columns,criteria):
-    sql = "SELECT "
-    for column in columns:
-        sql = sql + "?, "
-    sql = sql[:-2] + " FROM tweets WHERE "
-    for query in range(0,len(criteria),2):
-        sql = sql + "? = ? AND "
-    sql = sql[:-5] + ";"
-    values = columns + criteria
-    print(sql,values)
-    #c.execute(sql,values)
-    #c.execute("SELECT id, text FROM tweets WHERE followers = 2000 AND retweets = 1999")
-    c.execute("SELECT ?, ? FROM tweets WHERE ? = ?",("id","text","user","sam"))
-    return c.fetchall() """
-
-def delete(table,criteria):
-    conn = sqlite3.connect('ukpoliticstweets.db')
-    c = conn.cursor()
-    c.execute('DELETE FROM ? WHERE ?;',(table,criteria))
-    conn.commit()
-    conn.close()
-
+#Deletes unneeded old tweets from the unsorted database to reduce file size, you still need to vacuum the db afterwards
 def deleteOldTweets(file):
     stopAtId = getLargestExistingId()
     conn = sqlite3.connect(file)
     c = conn.cursor()
     c.execute('DELETE FROM tweets WHERE id < ?;',(stopAtId,))
     conn.commit()
+    c.execute('VACUUM;')
     conn.close()
 
+#Gets the ID of the newest tweet sorted into sortedTweets.db, used to determine where to stop deleting
 def getLargestExistingId():
     conn = sqlite3.connect('sortedTweets.db')
     c = conn.cursor()
@@ -188,7 +174,8 @@ def getLargestExistingId():
     return max(maxIds)
 
 if __name__ == '__main__':
-    formatPollDate()
+    print()
+    #formatPollDate()
     #deleteOldTweets('ukpoliticstweets.db')
     #deleteOldTweets('ukpoliticstweets2.db')
     #formatDate()

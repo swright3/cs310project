@@ -41,8 +41,12 @@ def plotAllPolls():
 
     plt.scatter(xValues, yValuesCon, c='blue', s=2, label='Con')
     plt.scatter(xValues, yValuesLab, c='red', s=2, label='Lab')
-    plt.scatter(xValues, yValuesLibdem, c='yellow', s=2, label='Lib Dem')
+    plt.scatter(xValues, yValuesLibdem, c='orange', s=2, label='Lib Dem')
     plt.scatter(xValues, yValuesGreen, c='green', s=2, label='Green')
+    plt.legend(loc="best")
+    plt.xlabel('Date of Poll')
+    plt.ylabel('Percentage Vote')
+    plt.title('Poll Results Since 2012-6-18')
     plt.show()
 
 def plotRealVsCalculated(party,polynomial,degree):
@@ -166,7 +170,9 @@ def plotRegressionModels():
     plt.show()
 
 if __name__ == '__main__':
-    plotRealVsCalculated('libdem',True,2)
+    print()
+    #plotAllPolls()
+    #plotRealVsCalculated('libdem',True,2)
     #plotRealVsCalculatedScaledByFollowers('con',True,2)
     #plotRegressionModels()
     

@@ -5,6 +5,7 @@ import re
 import string
 from nltk.corpus import wordnet as wn
 
+#Non parallel process tweet cleaner functions
 def tweetCleaner(tweets):
     tokenizedTweets = tokenize(tweets)
     normalizedTweets = normalize(tokenizedTweets)
@@ -54,6 +55,7 @@ def lemmatize(normalizedTweets):
         lemmatizedTweets.append(lemmatizedWords)
     return lemmatizedTweets
 
+#Parallel processing safe tweet cleaning functions
 def tweetCleanerP(tweet):
     wn.ensure_loaded()
     tokenizedTweet = tokenizeP(tweet)
@@ -62,20 +64,11 @@ def tweetCleanerP(tweet):
     cleanedTweet = cleanP(lemmatizedTweet)
     return cleanedTweet
 
+#First the tweet is broken down into tokens
 def tokenizeP(tweet):
     return nltk.tokenize.casual.casual_tokenize(tweet)
 
-def cleanP(lemmatizedTweet):
-    cleanedWords = []
-    for word in lemmatizedTweet:
-        word = re.sub('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+#]|[!*\(\),]|'\
-                    '(?:%[0-9a-fA-F][0-9a-fA-F]))+','',word)
-        word = re.sub("(@[A-Za-z0-9_]+)","",word)
-
-        if len(word)>0 and (word.lower() not in nltk.corpus.stopwords.words('english')) and word not in string.punctuation:
-            cleanedWords.append(word.lower())
-    return cleanedWords
-
+#The words are converted to their canonical forms
 def normalizeP(tokenizedTweet):
     return nltk.tag.pos_tag(tokenizedTweet)
 
@@ -92,6 +85,19 @@ def lemmatizeP(normalizedTweet):
         lemmatizedWords.append(lemmatizer.lemmatize(word, pos))
     return lemmatizedWords
 
+#The links are stripped out and the stopwords and punctuation removed
+def cleanP(lemmatizedTweet):
+    cleanedWords = []
+    for word in lemmatizedTweet:
+        word = re.sub('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+#]|[!*\(\),]|'\
+                    '(?:%[0-9a-fA-F][0-9a-fA-F]))+','',word)
+        word = re.sub("(@[A-Za-z0-9_]+)","",word)
+
+        if len(word)>0 and (word.lower() not in nltk.corpus.stopwords.words('english')) and word not in string.punctuation:
+            cleanedWords.append(word.lower())
+    return cleanedWords
+
+#Takes a newly collected tweet and cleans it
 def collectedTweetCleaner(tweet):
     wn.ensure_loaded()
     tweet[1] = tokenizeP(tweet[1])
@@ -100,33 +106,12 @@ def collectedTweetCleaner(tweet):
     tweet[1] = cleanP(tweet[1])
     return tweet
 
-def removeStopwords(tweet):
-    result = []
-    for word in tweet:
-        if word not in nltk.corpus.stopwords.words('english'):
-            result.append(word)
-    return result
-
-def tweetsToTXT(tweets,file):
-    # finalTweets = []
-    # for tweet in tweets:
-    #     newTweet = []
-    #     for word in tweet:
-    #         if word not in nltk.corpus.stopwords.words():
-    #             newTweet.append(word)
-    #     finalTweets.append(newTweet)
-
-    with open(file,'w',encoding="utf-8") as f:
-        f.write(str(tweets))
-
+#For sample tweets it was quicker to save the cleaned forms as a pickle file than clean each time
 def tweetsToPickle(tweets,file):
     df = pd.DataFrame(((tweet,) for tweet in tweets), columns=['tweets'])
     df.to_pickle(file)
 
-def tweetsFromTXT(file):
-    with open(file,'r') as f:
-        return f.read()
-
+#Gets cleaned tweets from a pickle file
 def tweetsFromPickle(file):
     return pd.read_pickle(file)
 

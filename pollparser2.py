@@ -5,15 +5,18 @@ import numpy as np
 import sqlite3
 import enum
 
+#Collects the html from the source page
 def getHTML(link):
     source = requests.get(link).text
     soup = BeautifulSoup(source,'lxml')
     return soup
 
+#Collects the table from ukpollingreport for polls before 2020
 def getPre2020Table(soup):
     table = soup.find('div', class_='polltable').find('table')
     return table
 
+#Formats the dates of each poll
 def parseDate(date,year):
     dateLib = {'Jan':'1','Feb':'2','Mar':'3','Apr':'4','May':'5','Jun':'6','Jul':'7','Aug':'8','Sep':'9','Oct':'10','Nov':'11','Dec':'12'}
     dateString = str(year) + '-' + dateLib[date[-3:]] +'-'
@@ -26,6 +29,7 @@ def parseDate(date,year):
         dateString += dateList[-2][-2:]
     return dateString
 
+#Puts the ukpollingreport polls into an array
 def pre2020TableToArray(table):
     rows = table.find_all('tr')
     headers = rows[0].find_all('td')
@@ -47,6 +51,7 @@ def pre2020TableToArray(table):
                 array.append(data)
     return array
 
+#Turns the array into a pandas dataframe
 def pre2020PollsToDF():
     soup = getHTML('http://ukpollingreport.co.uk/voting-intention-2')
     table = getPre2020Table(soup)
@@ -55,11 +60,13 @@ def pre2020PollsToDF():
     df = df.drop(['ukip', 'con lead'],axis=1)
     return df
 
+#Gets either the 2020 or 2021 poll table from wikipedia
 def getNewTable(soup,index):
     tables = soup.find_all('table', class_='wikitable sortable mw-datatable')
     table = tables[index].tbody()
     return table
 
+#Turns the 2020/2021 table into an array
 def newTableToArray(rows,index):
     headers = rows[0].find_all('th')
     array = []
@@ -79,6 +86,7 @@ def newTableToArray(rows,index):
             array.append(data)
     return array
 
+#Converts the array to a dataframe
 def newPollsToDF(index):
     soup = getHTML('https://en.wikipedia.org/wiki/Opinion_polling_for_the_next_United_Kingdom_general_election')
     table = getNewTable(soup,index)
@@ -87,6 +95,7 @@ def newPollsToDF(index):
     df = df.drop(['client','area','samplesize','snp','others','lead'],axis=1)
     return df
 
+#Takes a dataframe of polls and inserts them into the database
 def pollsToDB(polls):
     conn = sqlite3.connect('sortedTweets.db')
     c = conn.cursor()
@@ -95,6 +104,7 @@ def pollsToDB(polls):
     conn.commit()
     conn.close()
 
+#Takes brand new polls and inserts them into the database
 def newPollsToDB():
     newPolls = newPollsToDF(0)
     conn = sqlite3.connect('sortedTweets.db')
@@ -104,12 +114,16 @@ def newPollsToDB():
     existing = dbToDf(c.fetchall())
     complement = newPolls.merge(existing, how = 'outer' ,indicator=True).loc[lambda x : x['_merge']=='left_only']
     complement.drop(['_merge'],axis=1)
+    print('Polls to be added to db:')
+    print(complement)
     pollsToDB(complement.iloc[::-1])
 
+#Converts polls selected from a database to a dataframe
 def dbToDf(polls):
     df = pd.DataFrame(polls,columns=['pollster','date','con','lab','libdem','green'])
     return df   
 
+#Creates the poll table in sortedTweets.db
 def makePollTable(file):
     conn = sqlite3.connect(file)
     c = conn.cursor()

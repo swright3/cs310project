@@ -1,4 +1,7 @@
 import pandas as pd
+
+#ONE TIME USE SCRIPT TO CONVERT THE UK PLACES CSV INTO A FORMATTED TEXT FILE
+
 df = pd.read_csv('Towns_List.csv')
 places = []
 for place in df.itertuples(index=False):
