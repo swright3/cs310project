@@ -166,7 +166,7 @@ def plotRegressionModels():
     plt.show()
 
 if __name__ == '__main__':
-    #plotRealVsCalculated('con',True,2)
+    plotRealVsCalculated('libdem',True,2)
     #plotRealVsCalculatedScaledByFollowers('con',True,2)
-    plotRegressionModels()
+    #plotRegressionModels()
     

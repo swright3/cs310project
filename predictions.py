@@ -96,10 +96,8 @@ def trainPolynomialModel(data,degree):
     modelMetrics = []
     modelMetrics.append(r_sq)
     modelMetrics.append(model.intercept_)
-    modelMetrics.append(model.coef_[0])
-    modelMetrics.append(model.coef_[1])
-    print(modelMetrics)
-    #return model, modelMetrics
+    modelMetrics.append(model.coef_)
+    return model, modelMetrics
 
 def predictPercentage(party,dates,polynomial,degree):
     data = collectData(party)
@@ -145,8 +143,11 @@ def predictPercentageScaledByFollowers(party,dates,polynomial,degree):
         predictions.append(model.predict(x))
     return predictions, modelMetrics
 
-def predictPercentageFromPastPolls():
-    print()
+def finalPredictions(dates,polynomial,degree):
+    for party in ['con','lab','libdem','green']:
+        predictions, modelMetrics = predictPercentage(party, dates, polynomial, degree)
+        for prediction in range(len(predictions)):
+            print(party + ' party percentage vote prediction for ' + dates[prediction] + ': ' + str(round(predictions[prediction][0],2)) + '%')
 
 if __name__ == '__main__':
-    predictPercentage('con','2021-03-14')
+    finalPredictions(['2021-3-14','2021-3-15'],False,1)
