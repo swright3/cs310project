@@ -53,3 +53,133 @@ Y Intercept: 3.4584342851647465
 Gradient of slope: 0.06363865020037446
 Root Mean Squared Error: 0.9389394850016045
 Mean Absolute Error: 0.6491701655988329
+
+Model Accuracy Metrics, Conservative Polynomial Regression (order 2)
+R Squared: 0.2610604577059692
+Y Intercept: 38.57347458990624
+Coefficients:  [1.52613379 -0.10235749]
+Root Mean Squared Error: 0.9831902470974998
+Mean Absolute Error: 0.9285906488348589
+
+Model Accuracy Metrics, Conservative Scaled Polynomial Regression (order 2)
+R Squared: 0.2758894475640975
+Y Intercept: 37.92078276735764
+Coefficients: [0.3158333  -0.00231685]
+Root Mean Squared Error: 1.6258240517909364
+Mean Absolute Error: 1.2210517260701903
+
+Model Accuracy Metrics, Labour Polynomial Regression (order 2)
+R Squared: 0.2713831760168641
+Y Intercept: 34.45536855273082
+Coefficients: [-0.45623381 -0.02902269]
+Root Mean Squared Error: 1.7009267991441048
+Mean Absolute Error: 1.1621432735209345
+
+Model Accuracy Metrics, Labour Scaled Polynomial Regression (order 2)
+R Squared: 0.37833498006613686
+Y Intercept: 35.68526224240486
+Coefficients: [0.47335215 -0.06199603]
+Root Mean Squared Error: 5.839954367832458
+Mean Absolute Error: 3.2357251029540595
+
+Model Accuracy Metrics, Lib Dem Polynomial Regression (order 2)
+R Squared: 0.46639289353814717
+Y Intercept: 7.8069410573257105
+Coefficients: [-0.0201118  -0.00184803]
+Root Mean Squared Error: 1.081314579590611
+Mean Absolute Error: 0.8367703473322096
+
+Model Accuracy Metrics, Lib Dem Scaled Polynomial Regression (order 2)
+R Squared: 0.1422183877143206
+Y Intercept: 7.465428808120391
+Coefficients: [0.00728733 -0.00087574]
+Root Mean Squared Error: 1.131378353579955
+Mean Absolute Error: 0.9905005917717195
+
+Model Accuracy Metrics, Greens Polynomial Regression (order 2)
+R Squared: 0.05755795187861368
+Y Intercept: 76.67585881248378
+Coefficients: [-3.21373786  0.03576314]
+Root Mean Squared Error: 0.9774301413175949
+Mean Absolute Error: 0.7924269721236682
+
+Model Accuracy Metrics, Greens Scaled Polynomial Regression (order 2)
+R Squared: 0.376297217326381
+Y Intercept: -5.2705845173394605
+Coefficients: [ 1.05165476 -0.02523013]
+Root Mean Squared Error: 0.8038981017368381
+Mean Absolute Error: 0.6913072069908448
+
+Model Accuracy Metrics, Conservative Polynomial Regression (order 3)
+R Squared: 0.7037828457757693
+Y Intercept: 5.233629073170825
+Coefficients: [19.90218758 -3.21396146  0.16576495]
+Root Mean Squared Error: 0.9700175958824117
+Mean Absolute Error: 0.7082167920500991
+
+Model Accuracy Metrics, Conservative Scaled Polynomial Regression (order 3)
+R Squared: 0.29801633290391916
+Y Intercept: -119.79559576896565
+Coefficients: [ 2.08300483e+01 -8.82367336e-01  1.24526052e-02]
+Root Mean Squared Error: 12.448132996523713
+Mean Absolute Error: 5.418435835899975
+
+Model Accuracy Metrics, Labour Polynomial Regression (order 3)
+R Squared: 0.27531642835687575
+Y Intercept: 34.15050775769246
+Coefficients: [-0.45112828  0.00359692  0.0028319 ]
+Root Mean Squared Error: 1.8122509849265414
+Mean Absolute Error: 1.3783252208848629
+
+Model Accuracy Metrics, Labour Scaled Polynomial Regression (order 3)
+R Squared: 0.43837795929435475
+Y Intercept: 34.936516128465165
+Coefficients: [ 0.3543802   0.09224461 -0.01223647]
+Root Mean Squared Error: 11.05968259676783
+Mean Absolute Error: 5.321331032376285
+
+Model Accuracy Metrics, Lib Dem Polynomial Regression (order 3)
+R Squared: 0.47688314100932594
+Y Intercept: 7.634846885967274
+Coefficients: [-3.71980010e-03 -5.13990005e-04 -6.55901209e-05]
+Root Mean Squared Error: 1.2508061260296355
+Mean Absolute Error: 0.9094208111346695
+
+Model Accuracy Metrics, Lib Dem Scaled Polynomial Regression (order 3)
+R Squared: 0.9912780910675522
+Y Intercept: 6.351900775385452
+Coefficients: [ 0.08088471  0.00714167 -0.00024195]
+Root Mean Squared Error: 3.8353666041285424
+Mean Absolute Error: 1.5161662588781921
+
+Model Accuracy Metrics, Greens Polynomial Regression (order 3)
+R Squared: 0.4351115161553626
+Y Intercept: 315508.5539394673
+Coefficients: [-1.99054675e+04  4.18380429e+02 -2.92961933e+00]
+Root Mean Squared Error: 30.48913913454212
+Mean Absolute Error: 12.120151185563632
+
+Model Accuracy Metrics, Greens Scaled Polynomial Regression (order 3)
+R Squared: 0.7232045107790219
+Y Intercept: [-5.91325987  0.34830551 -0.00637825]
+Coefficients: -5.913259870288618
+Root Mean Squared Error: 0.5203603437159696
+Mean Absolute Error: 0.4092269545445727
+
+CONSERVATIVES
+R Squared: 0.19694655785413806, 0.27564237098884536, 0.2610604577059692, 0.2758894475640975, 0.7037828457757693, 0.29801633290391916
+RMSE: 1.0118487366876894, 1.7591778545795174, 0.9831902470974998, 1.6258240517909364, 0.9700175958824117, 12.448132996523713
+[8.98608108 3.32517432 5.13626997 8.02841886 7.3368986  7.3368986 ]
+[45 42 45 43 45 43]
+
+LABOUR
+R Squared: 0.19164896301842604, 0.04810132052545324, 0.2713831760168641, 0.37833498006613686, 0.27531642835687575, 0.43837795929435475
+RMSE: 1.8547961257980718, 1.9587888713574553, 1.7009267991441048, 5.839954367832458, 1.8122509849265414, 11.05968259676783
+
+LIB DEM
+R Squared: 0.38048048771339327, 0.0891909310124992, 0.46639289353814717, 0.1422183877143206, 0.47688314100932594, 0.9912780910675522
+RMSE: 0.9399779498437973, 1.0451911839678831, 1.081314579590611, 0.8038981017368381, 1.2508061260296355, 3.8353666041285424
+
+GREENS
+R Squared: 0.05674927581025835, 0.11842948784006846, 0.05755795187861368, 0.376297217326381, 0.4351115161553626, 0.7232045107790219
+RMSE: 0.9986502866790784, 0.9389394850016045, 0.9774301413175949, 0.8038981017368381, 30.48913913454212, 0.5203603437159696
